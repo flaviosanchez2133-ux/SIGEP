@@ -1,12 +1,26 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { User } from '../types';
+import { authService, getAccessToken, clearTokens, Usuario } from '../services/api';
+import { socketService } from '../services/socket';
 
-// Definición de usuarios del sistema
-export const USUARIOS_SISTEMA: Record<
-  string,
-  { password: string; user: User }
-> = {
+// Flag para usar API real o simulada
+const USE_API = true; // Cambiar a false para usar usuarios locales
+
+// Usuarios locales de respaldo (para desarrollo sin backend)
+export const USUARIOS_SISTEMA: Record<string, { password: string; user: User }> = {
+  superadmin: {
+    password: 'SIGEP_2024',
+    user: {
+      id: 'superadmin',
+      username: 'superadmin',
+      nombre: 'Super Administrador',
+      departamento: 'Departamento Inteligencia Criminal - Análisis Delictual',
+      rol: 'admin',
+      color: '#1e3a5f',
+      permisos: ['all', 'read', 'write', 'export', 'admin'],
+    },
+  },
   d1_admin: {
     password: 'D1_2024',
     user: {
@@ -67,158 +81,31 @@ export const USUARIOS_SISTEMA: Record<
       permisos: ['d5', 'read', 'write', 'export'],
     },
   },
-  asuntos_admin: {
-    password: 'AI_2024',
-    user: {
-      id: 'asuntos',
-      username: 'asuntos_admin',
-      nombre: 'Administrador Asuntos Internos',
-      departamento: 'Dirección General Asuntos Internos',
-      rol: 'admin',
-      color: '#1e40af',
-      permisos: ['asuntos', 'read', 'write', 'export'],
-    },
-  },
-  rurales_admin: {
-    password: 'DR_2024',
-    user: {
-      id: 'rurales',
-      username: 'rurales_admin',
-      nombre: 'Administrador Delitos Rurales',
-      departamento: 'Dirección General de Delitos Rurales y Ambientales',
-      rol: 'admin',
-      color: '#166534',
-      permisos: ['rurales', 'read', 'write', 'export'],
-    },
-  },
-  digedrop_admin: {
-    password: 'DG_2024',
-    user: {
-      id: 'digedrop',
-      username: 'digedrop_admin',
-      nombre: 'Administrador DIGEDROP',
-      departamento: 'Dirección General de Drogas Peligrosas',
-      rol: 'admin',
-      color: '#dc2626',
-      permisos: ['digedrop', 'read', 'write', 'export'],
-    },
-  },
-  prevencion_admin: {
-    password: 'PC_2024',
-    user: {
-      id: 'prevencion',
-      username: 'prevencion_admin',
-      nombre: 'Administrador Prevención Ciudadana',
-      departamento: 'Dirección General de Prevención Ciudadana',
-      rol: 'admin',
-      color: '#22c55e',
-      permisos: ['prevencion', 'read', 'write', 'export'],
-    },
-  },
-  especiales_admin: {
-    password: 'UE_2024',
-    user: {
-      id: 'especiales',
-      username: 'especiales_admin',
-      nombre: 'Administrador Unidades Especiales',
-      departamento: 'Dirección General de Unidades Especiales',
-      rol: 'admin',
-      color: '#ea580c',
-      permisos: ['especiales', 'read', 'write', 'export'],
-    },
-  },
-  institutos_admin: {
-    password: 'II_2024',
-    user: {
-      id: 'institutos',
-      username: 'institutos_admin',
-      nombre: 'Administrador Institutos',
-      departamento: 'Dirección General de Institutos e Instrucción',
-      rol: 'admin',
-      color: '#7c3aed',
-      permisos: ['institutos', 'read', 'write', 'export'],
-    },
-  },
-  ur_capital: {
-    password: 'URC_2024',
-    user: {
-      id: 'ur_capital',
-      username: 'ur_capital',
-      nombre: 'Administrador UR Capital',
-      departamento: 'Unidad Regional Capital',
-      rol: 'admin',
-      color: '#3b82f6',
-      permisos: ['ur_capital', 'read', 'write', 'export'],
-    },
-  },
-  ur_norte: {
-    password: 'URN_2024',
-    user: {
-      id: 'ur_norte',
-      username: 'ur_norte',
-      nombre: 'Administrador UR Norte',
-      departamento: 'Unidad Regional Norte',
-      rol: 'admin',
-      color: '#10b981',
-      permisos: ['ur_norte', 'read', 'write', 'export'],
-    },
-  },
-  ur_sur: {
-    password: 'URS_2024',
-    user: {
-      id: 'ur_sur',
-      username: 'ur_sur',
-      nombre: 'Administrador UR Sur',
-      departamento: 'Unidad Regional Sur',
-      rol: 'admin',
-      color: '#f97316',
-      permisos: ['ur_sur', 'read', 'write', 'export'],
-    },
-  },
-  ur_este: {
-    password: 'URE_2024',
-    user: {
-      id: 'ur_este',
-      username: 'ur_este',
-      nombre: 'Administrador UR Este',
-      departamento: 'Unidad Regional Este',
-      rol: 'admin',
-      color: '#8b5cf6',
-      permisos: ['ur_este', 'read', 'write', 'export'],
-    },
-  },
-  ur_oeste: {
-    password: 'URO_2024',
-    user: {
-      id: 'ur_oeste',
-      username: 'ur_oeste',
-      nombre: 'Administrador UR Oeste',
-      departamento: 'Unidad Regional Oeste',
-      rol: 'admin',
-      color: '#ef4444',
-      permisos: ['ur_oeste', 'read', 'write', 'export'],
-    },
-  },
-  superadmin: {
-    password: 'SIGEP_2024',
-    user: {
-      id: 'superadmin',
-      username: 'superadmin',
-      nombre: 'Super Administrador',
-      departamento: 'Departamento Inteligencia Criminal - Análisis Delictual',
-      rol: 'admin',
-      color: '#1e3a5f',
-      permisos: ['all', 'read', 'write', 'export', 'admin'],
-    },
-  },
 };
+
+// Convertir usuario de API a tipo local
+function apiUserToLocal(apiUser: Usuario): User {
+  return {
+    id: apiUser.id,
+    username: apiUser.username,
+    nombre: apiUser.nombre,
+    departamento: apiUser.departamento?.nombre || 'Sin departamento',
+    rol: apiUser.rol.toLowerCase() as 'admin' | 'editor' | 'viewer',
+    color: apiUser.color,
+    permisos: apiUser.permisos.map(p => p.tipo),
+  };
+}
 
 interface AuthState {
   user: User | null;
   isAuthenticated: boolean;
-  login: (username: string, password: string) => boolean;
-  logout: () => void;
+  isLoading: boolean;
+  error: string | null;
+  login: (username: string, password: string) => Promise<boolean>;
+  logout: () => Promise<void>;
   hasPermission: (permission: string) => boolean;
+  checkAuth: () => Promise<void>;
+  clearError: () => void;
 }
 
 export const useAuthStore = create<AuthState>()(
@@ -226,22 +113,78 @@ export const useAuthStore = create<AuthState>()(
     (set, get) => ({
       user: null,
       isAuthenticated: false,
+      isLoading: false,
+      error: null,
 
-      login: (username: string, password: string) => {
-        const userConfig = USUARIOS_SISTEMA[username];
+      login: async (username: string, password: string) => {
+        set({ isLoading: true, error: null });
 
-        if (userConfig && userConfig.password === password) {
+        if (USE_API) {
+          try {
+            const apiUser = await authService.login({ username, password });
+            const user = apiUserToLocal(apiUser);
+            
+            // Conectar Socket.IO después del login
+            socketService.connect();
+            
+            set({
+              user,
+              isAuthenticated: true,
+              isLoading: false,
+              error: null,
+            });
+            return true;
+          } catch (error: any) {
+            const message = error.response?.data?.message || 'Credenciales inválidas';
+            set({
+              isLoading: false,
+              error: message,
+            });
+            return false;
+          }
+        } else {
+          // Modo local (sin backend)
+          const userConfig = USUARIOS_SISTEMA[username];
+          if (userConfig && userConfig.password === password) {
+            set({
+              user: userConfig.user,
+              isAuthenticated: true,
+              isLoading: false,
+              error: null,
+            });
+            return true;
+          }
           set({
-            user: userConfig.user,
-            isAuthenticated: true,
+            isLoading: false,
+            error: 'Usuario o contraseña incorrectos',
           });
-          return true;
+          return false;
         }
-        return false;
       },
 
-      logout: () => {
-        set({ user: null, isAuthenticated: false });
+      logout: async () => {
+        set({ isLoading: true });
+
+        if (USE_API) {
+          try {
+            await authService.logout();
+          } catch (error) {
+            console.error('Error en logout:', error);
+          }
+        }
+        
+        // Desconectar Socket.IO
+        socketService.disconnect();
+        
+        // Limpiar tokens
+        clearTokens();
+        
+        set({
+          user: null,
+          isAuthenticated: false,
+          isLoading: false,
+          error: null,
+        });
       },
 
       hasPermission: (permission: string) => {
@@ -250,9 +193,50 @@ export const useAuthStore = create<AuthState>()(
         if (user.permisos.includes('all')) return true;
         return user.permisos.includes(permission);
       },
+
+      checkAuth: async () => {
+        if (!USE_API) return;
+        
+        const token = getAccessToken();
+        if (!token) {
+          set({ user: null, isAuthenticated: false });
+          return;
+        }
+
+        set({ isLoading: true });
+        try {
+          const apiUser = await authService.getCurrentUser();
+          const user = apiUserToLocal(apiUser);
+          
+          // Reconectar Socket.IO si es necesario
+          socketService.connect();
+          
+          set({
+            user,
+            isAuthenticated: true,
+            isLoading: false,
+          });
+        } catch (error) {
+          // Token inválido o expirado
+          clearTokens();
+          socketService.disconnect();
+          set({
+            user: null,
+            isAuthenticated: false,
+            isLoading: false,
+          });
+        }
+      },
+
+      clearError: () => set({ error: null }),
     }),
     {
       name: 'sigep-auth-storage',
+      partialize: (state) => ({
+        // Solo persistir el estado de autenticación, no el loading/error
+        user: state.user,
+        isAuthenticated: state.isAuthenticated,
+      }),
     }
   )
 );

@@ -5,7 +5,7 @@ import { Eye, EyeOff, Lock, User, BarChart3, Shield } from 'lucide-react';
 
 export function LoginPage() {
   const navigate = useNavigate();
-  const { login } = useAuthStore();
+  const { login, error: authError, clearError } = useAuthStore();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -15,17 +15,19 @@ export function LoginPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+    clearError();
     setLoading(true);
 
-    // Simulamos un delay de autenticación
-    await new Promise(resolve => setTimeout(resolve, 500));
+    try {
+      const success = await login(username, password);
 
-    const success = login(username, password);
-
-    if (success) {
-      navigate('/dashboard');
-    } else {
-      setError('Usuario o contraseña incorrectos');
+      if (success) {
+        navigate('/dashboard');
+      } else {
+        setError(authError || 'Usuario o contraseña incorrectos');
+      }
+    } catch (err) {
+      setError('Error de conexión con el servidor');
     }
 
     setLoading(false);
