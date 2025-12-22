@@ -1,0 +1,1 @@
+export { UnidadesRegionalesPage } from './UnidadesRegionalesPage';
