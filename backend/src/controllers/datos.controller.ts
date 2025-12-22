@@ -17,7 +17,11 @@ const updateDatosSchema = z.object({
 });
 
 // Listar departamentos
-export async function listDepartamentos(req: Request, res: Response, next: NextFunction): Promise<void> {
+export async function listDepartamentos(
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> {
   try {
     const departamentos = await prisma.departamento.findMany({
       where: { activo: true },
@@ -27,43 +31,55 @@ export async function listDepartamentos(req: Request, res: Response, next: NextF
       },
     });
 
-    res.json(departamentos.map(d => ({
-      id: d.id,
-      codigo: d.codigo,
-      nombre: d.nombre,
-      color: d.color,
-      tablasCount: d._count.tablas,
-    })));
+    res.json(
+      departamentos.map(d => ({
+        id: d.id,
+        codigo: d.codigo,
+        nombre: d.nombre,
+        color: d.color,
+        tablasCount: d._count.tablas,
+      }))
+    );
   } catch (error) {
     next(error);
   }
 }
 
 // Listar tablas de un departamento
-export async function listTablas(req: Request, res: Response, next: NextFunction): Promise<void> {
+export async function listTablas(
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> {
   try {
     const { departamentoId } = req.params;
 
     const tablas = await prisma.tablaConfig.findMany({
-      where: { 
+      where: {
         departamentoId,
         activo: true,
       },
       orderBy: { orden: 'asc' },
     });
 
-    res.json(tablas.map(t => ({
-      id: t.id,
-      tablaId: t.tablaId,
-      nombre: t.nombre,
-    })));
+    res.json(
+      tablas.map(t => ({
+        id: t.id,
+        tablaId: t.tablaId,
+        nombre: t.nombre,
+      }))
+    );
   } catch (error) {
     next(error);
   }
 }
 
 // Obtener datos de una tabla
-export async function getDatosTabla(req: Request, res: Response, next: NextFunction): Promise<void> {
+export async function getDatosTabla(
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> {
   try {
     const { tablaId } = req.params;
 
@@ -99,7 +115,11 @@ export async function getDatosTabla(req: Request, res: Response, next: NextFunct
 }
 
 // Actualizar datos de una tabla
-export async function updateDatosTabla(req: Request, res: Response, next: NextFunction): Promise<void> {
+export async function updateDatosTabla(
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> {
   try {
     const { tablaId } = req.params;
     const { datos } = updateDatosSchema.parse(req.body);
@@ -111,7 +131,7 @@ export async function updateDatosTabla(req: Request, res: Response, next: NextFu
     // Obtener tabla
     const tabla = await prisma.tablaConfig.findUnique({
       where: { tablaId },
-      include: { 
+      include: {
         datos: true,
         departamento: true,
       },
@@ -122,10 +142,11 @@ export async function updateDatosTabla(req: Request, res: Response, next: NextFu
     }
 
     // Verificar permisos
-    const tienePermiso = req.user.permisos.includes('all') || 
-                         req.user.permisos.includes('write') ||
-                         req.user.permisos.includes(tabla.departamento.codigo);
-    
+    const tienePermiso =
+      req.user.permisos.includes('all') ||
+      req.user.permisos.includes('write') ||
+      req.user.permisos.includes(tabla.departamento.codigo);
+
     if (!tienePermiso) {
       throw new AppError('No tienes permisos para editar esta tabla', 403);
     }
@@ -141,11 +162,13 @@ export async function updateDatosTabla(req: Request, res: Response, next: NextFu
 
     for (const dato of datos) {
       const datoExistente = tabla.datos.find(d => d.filaId === dato.filaId);
-      
+
       if (datoExistente) {
         // Verificar si hay cambios
-        const anteriorChanged = Number(datoExistente.periodoAnterior) !== dato.periodoAnterior;
-        const actualChanged = Number(datoExistente.periodoActual) !== dato.periodoActual;
+        const anteriorChanged =
+          Number(datoExistente.periodoAnterior) !== dato.periodoAnterior;
+        const actualChanged =
+          Number(datoExistente.periodoActual) !== dato.periodoActual;
 
         if (anteriorChanged) {
           cambios.push({
@@ -219,7 +242,11 @@ export async function updateDatosTabla(req: Request, res: Response, next: NextFu
 }
 
 // Obtener todos los datos (para el frontend)
-export async function getAllDatos(req: Request, res: Response, next: NextFunction): Promise<void> {
+export async function getAllDatos(
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> {
   try {
     const tablas = await prisma.tablaConfig.findMany({
       where: { activo: true },

@@ -20,6 +20,10 @@ router.get('/departamentos/:departamentoId/tablas', listTablas);
 // Datos
 router.get('/all', getAllDatos);
 router.get('/tablas/:tablaId', getDatosTabla);
-router.put('/tablas/:tablaId', requirePermission('write', 'all'), updateDatosTabla);
+router.put(
+  '/tablas/:tablaId',
+  requirePermission('write', 'all'),
+  updateDatosTabla
+);
 
 export default router;

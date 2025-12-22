@@ -9,12 +9,17 @@ export interface UpdateDatoRequest {
 
 // Listar departamentos
 export const listDepartamentos = async (): Promise<Departamento[]> => {
-  const response = await apiClient.get<ApiResponse<Departamento[]>>('/datos/departamentos');
+  const response = await apiClient.get<ApiResponse<Departamento[]>>(
+    '/datos/departamentos'
+  );
   return response.data.data;
 };
 
 // Obtener datos de una tabla
-export const getDatosTabla = async (departamentoId: string, tablaId?: string): Promise<TablaConfig[]> => {
+export const getDatosTabla = async (
+  departamentoId: string,
+  tablaId?: string
+): Promise<TablaConfig[]> => {
   const params = tablaId ? { tablaId } : {};
   const response = await apiClient.get<ApiResponse<TablaConfig[]>>(
     `/datos/departamentos/${departamentoId}/tablas`,

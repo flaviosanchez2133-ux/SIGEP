@@ -87,16 +87,16 @@ class SocketService {
       console.log('🔌 Socket conectado');
       this.isConnected = true;
       this.reconnectAttempts = 0;
-      this.onConnectionChange.forEach((cb) => cb(true));
+      this.onConnectionChange.forEach(cb => cb(true));
     });
 
-    this.socket.on('disconnect', (reason) => {
+    this.socket.on('disconnect', reason => {
       console.log('🔌 Socket desconectado:', reason);
       this.isConnected = false;
-      this.onConnectionChange.forEach((cb) => cb(false));
+      this.onConnectionChange.forEach(cb => cb(false));
     });
 
-    this.socket.on('connect_error', (error) => {
+    this.socket.on('connect_error', error => {
       console.error('🔌 Error de conexión:', error.message);
       this.reconnectAttempts++;
       if (this.reconnectAttempts >= this.maxReconnectAttempts) {
@@ -106,23 +106,23 @@ class SocketService {
 
     // Eventos de negocio
     this.socket.on('datos:actualizado', (data: DatoActualizadoEvent) => {
-      this.onDatoActualizado.forEach((cb) => cb(data));
+      this.onDatoActualizado.forEach(cb => cb(data));
     });
 
     this.socket.on('edicion:toggle', (data: EdicionToggleEvent) => {
-      this.onEdicionToggle.forEach((cb) => cb(data));
+      this.onEdicionToggle.forEach(cb => cb(data));
     });
 
     this.socket.on('usuario:conectado', (data: UsuarioConectadoEvent) => {
-      this.onUsuarioConectado.forEach((cb) => cb(data));
+      this.onUsuarioConectado.forEach(cb => cb(data));
     });
 
     this.socket.on('usuario:desconectado', (data: { usuarioId: string }) => {
-      this.onUsuarioDesconectado.forEach((cb) => cb(data));
+      this.onUsuarioDesconectado.forEach(cb => cb(data));
     });
 
     this.socket.on('config:periodo', (data: PeriodoActualizadoEvent) => {
-      this.onPeriodoActualizado.forEach((cb) => cb(data));
+      this.onPeriodoActualizado.forEach(cb => cb(data));
     });
   }
 
@@ -158,45 +158,65 @@ class SocketService {
   }
 
   // Suscripciones
-  subscribeDatoActualizado(callback: EventCallback<DatoActualizadoEvent>): () => void {
+  subscribeDatoActualizado(
+    callback: EventCallback<DatoActualizadoEvent>
+  ): () => void {
     this.onDatoActualizado.push(callback);
     return () => {
-      this.onDatoActualizado = this.onDatoActualizado.filter((cb) => cb !== callback);
+      this.onDatoActualizado = this.onDatoActualizado.filter(
+        cb => cb !== callback
+      );
     };
   }
 
-  subscribeEdicionToggle(callback: EventCallback<EdicionToggleEvent>): () => void {
+  subscribeEdicionToggle(
+    callback: EventCallback<EdicionToggleEvent>
+  ): () => void {
     this.onEdicionToggle.push(callback);
     return () => {
-      this.onEdicionToggle = this.onEdicionToggle.filter((cb) => cb !== callback);
+      this.onEdicionToggle = this.onEdicionToggle.filter(cb => cb !== callback);
     };
   }
 
-  subscribeUsuarioConectado(callback: EventCallback<UsuarioConectadoEvent>): () => void {
+  subscribeUsuarioConectado(
+    callback: EventCallback<UsuarioConectadoEvent>
+  ): () => void {
     this.onUsuarioConectado.push(callback);
     return () => {
-      this.onUsuarioConectado = this.onUsuarioConectado.filter((cb) => cb !== callback);
+      this.onUsuarioConectado = this.onUsuarioConectado.filter(
+        cb => cb !== callback
+      );
     };
   }
 
-  subscribeUsuarioDesconectado(callback: EventCallback<{ usuarioId: string }>): () => void {
+  subscribeUsuarioDesconectado(
+    callback: EventCallback<{ usuarioId: string }>
+  ): () => void {
     this.onUsuarioDesconectado.push(callback);
     return () => {
-      this.onUsuarioDesconectado = this.onUsuarioDesconectado.filter((cb) => cb !== callback);
+      this.onUsuarioDesconectado = this.onUsuarioDesconectado.filter(
+        cb => cb !== callback
+      );
     };
   }
 
-  subscribePeriodoActualizado(callback: EventCallback<PeriodoActualizadoEvent>): () => void {
+  subscribePeriodoActualizado(
+    callback: EventCallback<PeriodoActualizadoEvent>
+  ): () => void {
     this.onPeriodoActualizado.push(callback);
     return () => {
-      this.onPeriodoActualizado = this.onPeriodoActualizado.filter((cb) => cb !== callback);
+      this.onPeriodoActualizado = this.onPeriodoActualizado.filter(
+        cb => cb !== callback
+      );
     };
   }
 
   subscribeConnectionChange(callback: EventCallback<boolean>): () => void {
     this.onConnectionChange.push(callback);
     return () => {
-      this.onConnectionChange = this.onConnectionChange.filter((cb) => cb !== callback);
+      this.onConnectionChange = this.onConnectionChange.filter(
+        cb => cb !== callback
+      );
     };
   }
 }

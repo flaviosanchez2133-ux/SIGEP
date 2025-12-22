@@ -19,10 +19,15 @@ export interface HistorialResponse {
 }
 
 // Listar historial
-export const listHistorial = async (filters?: HistorialFilters): Promise<HistorialResponse> => {
-  const response = await apiClient.get<ApiResponse<HistorialResponse>>('/historial', {
-    params: filters,
-  });
+export const listHistorial = async (
+  filters?: HistorialFilters
+): Promise<HistorialResponse> => {
+  const response = await apiClient.get<ApiResponse<HistorialResponse>>(
+    '/historial',
+    {
+      params: filters,
+    }
+  );
   return response.data.data;
 };
 
@@ -32,9 +37,15 @@ export const revertirCambio = async (id: string): Promise<void> => {
 };
 
 // Limpiar historial (solo superadmin)
-export const limpiarHistorial = async (filters?: { desde?: string; hasta?: string }): Promise<{ deleted: number }> => {
-  const response = await apiClient.delete<ApiResponse<{ deleted: number }>>('/historial', {
-    params: filters,
-  });
+export const limpiarHistorial = async (filters?: {
+  desde?: string;
+  hasta?: string;
+}): Promise<{ deleted: number }> => {
+  const response = await apiClient.delete<ApiResponse<{ deleted: number }>>(
+    '/historial',
+    {
+      params: filters,
+    }
+  );
   return response.data.data;
 };

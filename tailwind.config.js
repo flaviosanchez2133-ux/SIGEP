@@ -4,6 +4,17 @@ export default {
   theme: {
     extend: {
       colors: {
+        // Sistema de colores oscuros futuristas
+        dark: {
+          950: '#020617',
+          900: '#0a0f1a',
+          800: '#0f172a',
+          700: '#1e293b',
+          600: '#334155',
+          500: '#475569',
+          400: '#64748b',
+          300: '#94a3b8',
+        },
         // Colores institucionales
         policia: {
           primary: '#1e3a5f',
@@ -28,6 +39,110 @@ export default {
         'ur-sur': { DEFAULT: '#f97316', light: '#fb923c', dark: '#ea580c' },
         'ur-este': { DEFAULT: '#8b5cf6', light: '#a78bfa', dark: '#7c3aed' },
         'ur-oeste': { DEFAULT: '#ef4444', light: '#f87171', dark: '#dc2626' },
+      },
+      boxShadow: {
+        'glow-sm': '0 0 10px -3px rgba(59, 130, 246, 0.5)',
+        glow: '0 0 20px -5px rgba(59, 130, 246, 0.6)',
+        'glow-lg': '0 0 30px -5px rgba(59, 130, 246, 0.7)',
+        'glow-xl': '0 0 50px -10px rgba(59, 130, 246, 0.8)',
+        'glow-blue': '0 0 20px rgba(59, 130, 246, 0.5)',
+        'glow-amber': '0 0 20px rgba(245, 158, 11, 0.5)',
+        'glow-green': '0 0 20px rgba(34, 197, 94, 0.5)',
+        'glow-red': '0 0 20px rgba(239, 68, 68, 0.5)',
+        'inner-glow': 'inset 0 0 20px rgba(59, 130, 246, 0.1)',
+      },
+      animation: {
+        'pulse-glow': 'pulseGlow 2s ease-in-out infinite',
+        shimmer: 'shimmer 2s linear infinite',
+        scan: 'scan 3s ease-in-out infinite',
+        float: 'float 6s ease-in-out infinite',
+        'data-stream': 'dataStream 20s linear infinite',
+        'border-flow': 'borderFlow 3s ease-in-out infinite',
+        typing: 'typing 3.5s steps(40, end)',
+        blink: 'blink 1s step-end infinite',
+        'slide-up': 'slideUp 0.5s ease-out',
+        'slide-down': 'slideDown 0.3s ease-out',
+        'scale-in': 'scaleIn 0.3s ease-out',
+        'glow-pulse': 'glowPulse 2s ease-in-out infinite',
+        counter: 'counter 2s ease-out forwards',
+        radar: 'radar 2s linear infinite',
+        wave: 'wave 1.5s ease-in-out infinite',
+      },
+      keyframes: {
+        pulseGlow: {
+          '0%, 100%': { boxShadow: '0 0 5px rgba(59, 130, 246, 0.5)' },
+          '50%': { boxShadow: '0 0 30px rgba(59, 130, 246, 0.8)' },
+        },
+        shimmer: {
+          '0%': { backgroundPosition: '-200% 0' },
+          '100%': { backgroundPosition: '200% 0' },
+        },
+        scan: {
+          '0%': { transform: 'translateY(-100%)' },
+          '50%': { transform: 'translateY(100%)' },
+          '100%': { transform: 'translateY(-100%)' },
+        },
+        float: {
+          '0%, 100%': { transform: 'translateY(0)' },
+          '50%': { transform: 'translateY(-10px)' },
+        },
+        dataStream: {
+          '0%': { backgroundPosition: '0 0' },
+          '100%': { backgroundPosition: '0 1000px' },
+        },
+        borderFlow: {
+          '0%, 100%': { borderColor: 'rgba(59, 130, 246, 0.3)' },
+          '50%': { borderColor: 'rgba(59, 130, 246, 0.8)' },
+        },
+        typing: {
+          from: { width: '0' },
+          to: { width: '100%' },
+        },
+        blink: {
+          '50%': { borderColor: 'transparent' },
+        },
+        slideUp: {
+          from: { opacity: '0', transform: 'translateY(20px)' },
+          to: { opacity: '1', transform: 'translateY(0)' },
+        },
+        slideDown: {
+          from: { opacity: '0', transform: 'translateY(-10px)' },
+          to: { opacity: '1', transform: 'translateY(0)' },
+        },
+        scaleIn: {
+          from: { opacity: '0', transform: 'scale(0.9)' },
+          to: { opacity: '1', transform: 'scale(1)' },
+        },
+        glowPulse: {
+          '0%, 100%': { opacity: '0.5' },
+          '50%': { opacity: '1' },
+        },
+        counter: {
+          from: { opacity: '0' },
+          to: { opacity: '1' },
+        },
+        radar: {
+          from: { transform: 'rotate(0deg)' },
+          to: { transform: 'rotate(360deg)' },
+        },
+        wave: {
+          '0%, 100%': { transform: 'scaleY(1)' },
+          '50%': { transform: 'scaleY(1.5)' },
+        },
+      },
+      backgroundImage: {
+        'grid-pattern':
+          'linear-gradient(rgba(59, 130, 246, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(59, 130, 246, 0.03) 1px, transparent 1px)',
+        'gradient-radial':
+          'radial-gradient(ellipse at center, var(--tw-gradient-stops))',
+        'shimmer-gradient':
+          'linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent)',
+      },
+      backgroundSize: {
+        grid: '50px 50px',
+      },
+      backdropBlur: {
+        xs: '2px',
       },
     },
   },

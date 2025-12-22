@@ -4,7 +4,11 @@ import {
   revertirCambio,
   limpiarHistorial,
 } from '../controllers/historial.controller.js';
-import { authMiddleware, requireSuperAdmin, requirePermission } from '../middleware/auth.js';
+import {
+  authMiddleware,
+  requireSuperAdmin,
+  requirePermission,
+} from '../middleware/auth.js';
 
 const router = Router();
 

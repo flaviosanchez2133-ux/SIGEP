@@ -25,12 +25,16 @@ export function useToggleEdicion() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (habilitada: boolean) => configService.toggleEdicion(habilitada),
-    onSuccess: (data) => {
-      queryClient.setQueryData(configKeys.all, (old: { global: ConfigGlobal; periodo: ConfigPeriodo } | undefined) => {
-        if (!old) return old;
-        return { ...old, global: data };
-      });
+    mutationFn: (habilitada: boolean) =>
+      configService.toggleEdicion(habilitada),
+    onSuccess: data => {
+      queryClient.setQueryData(
+        configKeys.all,
+        (old: { global: ConfigGlobal; periodo: ConfigPeriodo } | undefined) => {
+          if (!old) return old;
+          return { ...old, global: data };
+        }
+      );
     },
   });
 }
@@ -40,12 +44,16 @@ export function useUpdatePeriodo() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (data: UpdatePeriodoRequest) => configService.updatePeriodo(data),
-    onSuccess: (data) => {
-      queryClient.setQueryData(configKeys.all, (old: { global: ConfigGlobal; periodo: ConfigPeriodo } | undefined) => {
-        if (!old) return old;
-        return { ...old, periodo: data };
-      });
+    mutationFn: (data: UpdatePeriodoRequest) =>
+      configService.updatePeriodo(data),
+    onSuccess: data => {
+      queryClient.setQueryData(
+        configKeys.all,
+        (old: { global: ConfigGlobal; periodo: ConfigPeriodo } | undefined) => {
+          if (!old) return old;
+          return { ...old, periodo: data };
+        }
+      );
     },
   });
 }
@@ -56,11 +64,14 @@ export function useRealtimeConfig() {
 
   useEffect(() => {
     // Suscribirse a toggle de edición
-    const unsubscribeEdicion = socketService.subscribeEdicionToggle((event) => {
-      queryClient.setQueryData(configKeys.all, (old: { global: ConfigGlobal; periodo: ConfigPeriodo } | undefined) => {
-        if (!old) return old;
-        return { ...old, global: { edicionHabilitada: event.habilitada } };
-      });
+    const unsubscribeEdicion = socketService.subscribeEdicionToggle(event => {
+      queryClient.setQueryData(
+        configKeys.all,
+        (old: { global: ConfigGlobal; periodo: ConfigPeriodo } | undefined) => {
+          if (!old) return old;
+          return { ...old, global: { edicionHabilitada: event.habilitada } };
+        }
+      );
     });
 
     // Suscribirse a cambios de período

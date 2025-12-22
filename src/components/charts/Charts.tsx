@@ -28,8 +28,11 @@ export function ChartContainer({
   className,
 }: ChartContainerProps) {
   return (
-    <div className={`card ${className}`}>
-      <div className="card-header">{titulo}</div>
+    <div className={`card-glass relative overflow-hidden ${className}`}>
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-blue-500/30 to-transparent" />
+      <div className="card-header bg-dark-800/50 border-b border-blue-500/10">
+        <span className="text-gray-200">{titulo}</span>
+      </div>
       <div className="card-body">{children}</div>
     </div>
   );
@@ -49,8 +52,8 @@ interface BarChartComparativoProps {
 
 export function BarChartComparativo({
   datos,
-  colorAnterior = '#94a3b8',
-  colorActual = '#1e3a5f',
+  colorAnterior = '#475569',
+  colorActual = '#3b82f6',
   height = 300,
 }: BarChartComparativoProps) {
   return (
@@ -59,21 +62,23 @@ export function BarChartComparativo({
         data={datos}
         margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
       >
-        <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-        <XAxis dataKey="nombre" tick={{ fontSize: 12 }} />
-        <YAxis tick={{ fontSize: 12 }} />
+        <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
+        <XAxis dataKey="nombre" tick={{ fontSize: 12, fill: '#94a3b8' }} />
+        <YAxis tick={{ fontSize: 12, fill: '#94a3b8' }} />
         <Tooltip
           contentStyle={{
-            backgroundColor: 'white',
-            border: '1px solid #e5e7eb',
-            borderRadius: '8px',
-            boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)',
+            backgroundColor: '#0f172a',
+            border: '1px solid rgba(59, 130, 246, 0.3)',
+            borderRadius: '12px',
+            boxShadow: '0 0 30px rgba(59, 130, 246, 0.2)',
+            color: '#e2e8f0',
           }}
           formatter={(value: number) =>
             new Intl.NumberFormat('es-AR').format(value)
           }
+          labelStyle={{ color: '#94a3b8' }}
         />
-        <Legend />
+        <Legend wrapperStyle={{ color: '#94a3b8' }} />
         <Bar
           dataKey="anterior"
           name="Período Anterior"
@@ -161,12 +166,14 @@ export function PieChartComponent({
             new Intl.NumberFormat('es-AR').format(value)
           }
           contentStyle={{
-            backgroundColor: 'white',
-            border: '1px solid #e5e7eb',
-            borderRadius: '8px',
+            backgroundColor: '#0f172a',
+            border: '1px solid rgba(59, 130, 246, 0.3)',
+            borderRadius: '12px',
+            boxShadow: '0 0 30px rgba(59, 130, 246, 0.2)',
+            color: '#e2e8f0',
           }}
         />
-        <Legend />
+        <Legend wrapperStyle={{ color: '#94a3b8' }} />
       </PieChart>
     </ResponsiveContainer>
   );
@@ -199,20 +206,22 @@ export function LineChartComponent({
         data={datos}
         margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
       >
-        <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-        <XAxis dataKey="nombre" tick={{ fontSize: 12 }} />
-        <YAxis tick={{ fontSize: 12 }} />
+        <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
+        <XAxis dataKey="nombre" tick={{ fontSize: 12, fill: '#94a3b8' }} />
+        <YAxis tick={{ fontSize: 12, fill: '#94a3b8' }} />
         <Tooltip
           contentStyle={{
-            backgroundColor: 'white',
-            border: '1px solid #e5e7eb',
-            borderRadius: '8px',
+            backgroundColor: '#0f172a',
+            border: '1px solid rgba(59, 130, 246, 0.3)',
+            borderRadius: '12px',
+            boxShadow: '0 0 30px rgba(59, 130, 246, 0.2)',
+            color: '#e2e8f0',
           }}
           formatter={(value: number) =>
             new Intl.NumberFormat('es-AR').format(value)
           }
         />
-        <Legend />
+        <Legend wrapperStyle={{ color: '#94a3b8' }} />
         {lineas.map(linea => (
           <Line
             key={linea.key}
@@ -252,20 +261,22 @@ export function AreaChartComponent({
         data={datos}
         margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
       >
-        <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-        <XAxis dataKey="nombre" tick={{ fontSize: 12 }} />
-        <YAxis tick={{ fontSize: 12 }} />
+        <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
+        <XAxis dataKey="nombre" tick={{ fontSize: 12, fill: '#94a3b8' }} />
+        <YAxis tick={{ fontSize: 12, fill: '#94a3b8' }} />
         <Tooltip
           contentStyle={{
-            backgroundColor: 'white',
-            border: '1px solid #e5e7eb',
-            borderRadius: '8px',
+            backgroundColor: '#0f172a',
+            border: '1px solid rgba(59, 130, 246, 0.3)',
+            borderRadius: '12px',
+            boxShadow: '0 0 30px rgba(59, 130, 246, 0.2)',
+            color: '#e2e8f0',
           }}
           formatter={(value: number) =>
             new Intl.NumberFormat('es-AR').format(value)
           }
         />
-        <Legend />
+        <Legend wrapperStyle={{ color: '#94a3b8' }} />
         {areas.map(area => (
           <Area
             key={area.key}

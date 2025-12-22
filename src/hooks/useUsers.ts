@@ -1,6 +1,9 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { usersService } from '../services/api';
-import { CreateUserRequest, UpdateUserRequest } from '../services/api/users.service';
+import {
+  CreateUserRequest,
+  UpdateUserRequest,
+} from '../services/api/users.service';
 
 // Query keys
 export const usersKeys = {
@@ -44,7 +47,8 @@ export function useUpdateUser() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: UpdateUserRequest }) => usersService.updateUser(id, data),
+    mutationFn: ({ id, data }: { id: string; data: UpdateUserRequest }) =>
+      usersService.updateUser(id, data),
     onSuccess: (_, { id }) => {
       queryClient.invalidateQueries({ queryKey: usersKeys.all });
       queryClient.invalidateQueries({ queryKey: usersKeys.detail(id) });
@@ -55,7 +59,8 @@ export function useUpdateUser() {
 // Hook para cambiar contraseña
 export function useChangePassword() {
   return useMutation({
-    mutationFn: ({ id, password }: { id: string; password: string }) => usersService.changePassword(id, password),
+    mutationFn: ({ id, password }: { id: string; password: string }) =>
+      usersService.changePassword(id, password),
   });
 }
 

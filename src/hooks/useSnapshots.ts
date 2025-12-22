@@ -7,7 +7,8 @@ export const snapshotKeys = {
   all: ['snapshots'] as const,
   list: (anio?: number) => ['snapshots', 'list', anio] as const,
   detail: (id: string) => ['snapshots', 'detail', id] as const,
-  compare: (id1: string, id2: string) => ['snapshots', 'compare', id1, id2] as const,
+  compare: (id1: string, id2: string) =>
+    ['snapshots', 'compare', id1, id2] as const,
 };
 
 // Hook para listar snapshots
@@ -34,7 +35,8 @@ export function useCreateSnapshot() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (data: CreateSnapshotRequest) => snapshotsService.createSnapshot(data),
+    mutationFn: (data: CreateSnapshotRequest) =>
+      snapshotsService.createSnapshot(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: snapshotKeys.all });
     },

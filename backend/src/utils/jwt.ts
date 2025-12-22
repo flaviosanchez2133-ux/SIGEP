@@ -21,7 +21,10 @@ export async function hashPassword(password: string): Promise<string> {
 }
 
 // Verificar contraseña
-export async function verifyPassword(password: string, hash: string): Promise<boolean> {
+export async function verifyPassword(
+  password: string,
+  hash: string
+): Promise<boolean> {
   return bcrypt.compare(password, hash);
 }
 
@@ -68,10 +71,15 @@ export function getRefreshTokenExpiry(): number {
   const unit = match[2];
 
   switch (unit) {
-    case 'd': return value * 24 * 60 * 60;
-    case 'h': return value * 60 * 60;
-    case 'm': return value * 60;
-    case 's': return value;
-    default: return 7 * 24 * 60 * 60;
+    case 'd':
+      return value * 24 * 60 * 60;
+    case 'h':
+      return value * 60 * 60;
+    case 'm':
+      return value * 60;
+    case 's':
+      return value;
+    default:
+      return 7 * 24 * 60 * 60;
   }
 }

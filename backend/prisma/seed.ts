@@ -11,35 +11,199 @@ async function hashPassword(password: string): Promise<string> {
 
 // Datos de departamentos
 const departamentos = [
-  { codigo: 'd1', nombre: 'Departamento Personal (D-1)', color: '#1e3a5f', orden: 1 },
-  { codigo: 'd2', nombre: 'Departamento Inteligencia Criminal (D-2)', color: '#0ea5e9', orden: 2 },
-  { codigo: 'd3', nombre: 'Departamento Operaciones Policiales (D-3)', color: '#ef4444', orden: 3 },
-  { codigo: 'd4', nombre: 'Departamento Logística (D-4)', color: '#f59e0b', orden: 4 },
-  { codigo: 'd5', nombre: 'Departamento Judicial (D-5)', color: '#8b5cf6', orden: 5 },
-  { codigo: 'asuntos_internos', nombre: 'Dirección General de Asuntos Internos', color: '#374151', orden: 6 },
-  { codigo: 'delitos_rurales', nombre: 'Dirección General de Delitos Rurales', color: '#22c55e', orden: 7 },
-  { codigo: 'digedrop', nombre: 'Dirección General de Drogas Peligrosas', color: '#dc2626', orden: 8 },
-  { codigo: 'prevencion_ciudadana', nombre: 'Dirección General de Prevención Ciudadana', color: '#06b6d4', orden: 9 },
-  { codigo: 'unidades_especiales', nombre: 'Dirección General de Unidades Especiales', color: '#ea580c', orden: 10 },
-  { codigo: 'institutos', nombre: 'Dirección General de Institutos e Instrucción', color: '#2563eb', orden: 11 },
-  { codigo: 'unidades_regionales', nombre: 'Unidades Regionales', color: '#7c3aed', orden: 12 },
+  {
+    codigo: 'd1',
+    nombre: 'Departamento Personal (D-1)',
+    color: '#1e3a5f',
+    orden: 1,
+  },
+  {
+    codigo: 'd2',
+    nombre: 'Departamento Inteligencia Criminal (D-2)',
+    color: '#0ea5e9',
+    orden: 2,
+  },
+  {
+    codigo: 'd3',
+    nombre: 'Departamento Operaciones Policiales (D-3)',
+    color: '#ef4444',
+    orden: 3,
+  },
+  {
+    codigo: 'd4',
+    nombre: 'Departamento Logística (D-4)',
+    color: '#f59e0b',
+    orden: 4,
+  },
+  {
+    codigo: 'd5',
+    nombre: 'Departamento Judicial (D-5)',
+    color: '#8b5cf6',
+    orden: 5,
+  },
+  {
+    codigo: 'asuntos_internos',
+    nombre: 'Dirección General de Asuntos Internos',
+    color: '#374151',
+    orden: 6,
+  },
+  {
+    codigo: 'delitos_rurales',
+    nombre: 'Dirección General de Delitos Rurales',
+    color: '#22c55e',
+    orden: 7,
+  },
+  {
+    codigo: 'digedrop',
+    nombre: 'Dirección General de Drogas Peligrosas',
+    color: '#dc2626',
+    orden: 8,
+  },
+  {
+    codigo: 'prevencion_ciudadana',
+    nombre: 'Dirección General de Prevención Ciudadana',
+    color: '#06b6d4',
+    orden: 9,
+  },
+  {
+    codigo: 'unidades_especiales',
+    nombre: 'Dirección General de Unidades Especiales',
+    color: '#ea580c',
+    orden: 10,
+  },
+  {
+    codigo: 'institutos',
+    nombre: 'Dirección General de Institutos e Instrucción',
+    color: '#2563eb',
+    orden: 11,
+  },
+  {
+    codigo: 'unidades_regionales',
+    nombre: 'Unidades Regionales',
+    color: '#7c3aed',
+    orden: 12,
+  },
 ];
 
 // Datos de usuarios
 const usuarios = [
-  { username: 'superadmin', password: 'SIGEP_2024', nombre: 'Super Administrador', rol: Rol.ADMIN, color: '#1e3a5f', departamento: null, permisos: ['all', 'read', 'write', 'export', 'admin'] },
-  { username: 'd1_admin', password: 'D1_2024', nombre: 'Administrador D-1', rol: Rol.ADMIN, color: '#1e3a5f', departamento: 'd1', permisos: ['d1', 'read', 'write', 'export'] },
-  { username: 'd2_admin', password: 'D2_2024', nombre: 'Administrador D-2', rol: Rol.ADMIN, color: '#0ea5e9', departamento: 'd2', permisos: ['d2', 'read', 'write', 'export'] },
-  { username: 'd3_admin', password: 'D3_2024', nombre: 'Administrador D-3', rol: Rol.ADMIN, color: '#ef4444', departamento: 'd3', permisos: ['d3', 'read', 'write', 'export'] },
-  { username: 'd4_admin', password: 'D4_2024', nombre: 'Administrador D-4', rol: Rol.ADMIN, color: '#f59e0b', departamento: 'd4', permisos: ['d4', 'read', 'write', 'export'] },
-  { username: 'd5_admin', password: 'D5_2024', nombre: 'Administrador D-5', rol: Rol.ADMIN, color: '#8b5cf6', departamento: 'd5', permisos: ['d5', 'read', 'write', 'export'] },
-  { username: 'asuntos_admin', password: 'Asuntos_2024', nombre: 'Administrador Asuntos Internos', rol: Rol.ADMIN, color: '#374151', departamento: 'asuntos_internos', permisos: ['asuntos_internos', 'read', 'write', 'export'] },
-  { username: 'rurales_admin', password: 'Rurales_2024', nombre: 'Administrador Delitos Rurales', rol: Rol.ADMIN, color: '#22c55e', departamento: 'delitos_rurales', permisos: ['delitos_rurales', 'read', 'write', 'export'] },
-  { username: 'digedrop_admin', password: 'Digedrop_2024', nombre: 'Administrador DIGEDROP', rol: Rol.ADMIN, color: '#dc2626', departamento: 'digedrop', permisos: ['digedrop', 'read', 'write', 'export'] },
-  { username: 'prevencion_admin', password: 'Prevencion_2024', nombre: 'Administrador Prevención', rol: Rol.ADMIN, color: '#06b6d4', departamento: 'prevencion_ciudadana', permisos: ['prevencion_ciudadana', 'read', 'write', 'export'] },
-  { username: 'especiales_admin', password: 'Especiales_2024', nombre: 'Administrador Unidades Especiales', rol: Rol.ADMIN, color: '#ea580c', departamento: 'unidades_especiales', permisos: ['unidades_especiales', 'read', 'write', 'export'] },
-  { username: 'institutos_admin', password: 'Institutos_2024', nombre: 'Administrador Institutos', rol: Rol.ADMIN, color: '#2563eb', departamento: 'institutos', permisos: ['institutos', 'read', 'write', 'export'] },
-  { username: 'regionales_admin', password: 'Regionales_2024', nombre: 'Administrador Unidades Regionales', rol: Rol.ADMIN, color: '#7c3aed', departamento: 'unidades_regionales', permisos: ['unidades_regionales', 'read', 'write', 'export'] },
+  {
+    username: 'superadmin',
+    password: 'SIGEP_2024',
+    nombre: 'Super Administrador',
+    rol: Rol.ADMIN,
+    color: '#1e3a5f',
+    departamento: null,
+    permisos: ['all', 'read', 'write', 'export', 'admin'],
+  },
+  {
+    username: 'd1_admin',
+    password: 'D1_2024',
+    nombre: 'Administrador D-1',
+    rol: Rol.ADMIN,
+    color: '#1e3a5f',
+    departamento: 'd1',
+    permisos: ['d1', 'read', 'write', 'export'],
+  },
+  {
+    username: 'd2_admin',
+    password: 'D2_2024',
+    nombre: 'Administrador D-2',
+    rol: Rol.ADMIN,
+    color: '#0ea5e9',
+    departamento: 'd2',
+    permisos: ['d2', 'read', 'write', 'export'],
+  },
+  {
+    username: 'd3_admin',
+    password: 'D3_2024',
+    nombre: 'Administrador D-3',
+    rol: Rol.ADMIN,
+    color: '#ef4444',
+    departamento: 'd3',
+    permisos: ['d3', 'read', 'write', 'export'],
+  },
+  {
+    username: 'd4_admin',
+    password: 'D4_2024',
+    nombre: 'Administrador D-4',
+    rol: Rol.ADMIN,
+    color: '#f59e0b',
+    departamento: 'd4',
+    permisos: ['d4', 'read', 'write', 'export'],
+  },
+  {
+    username: 'd5_admin',
+    password: 'D5_2024',
+    nombre: 'Administrador D-5',
+    rol: Rol.ADMIN,
+    color: '#8b5cf6',
+    departamento: 'd5',
+    permisos: ['d5', 'read', 'write', 'export'],
+  },
+  {
+    username: 'asuntos_admin',
+    password: 'Asuntos_2024',
+    nombre: 'Administrador Asuntos Internos',
+    rol: Rol.ADMIN,
+    color: '#374151',
+    departamento: 'asuntos_internos',
+    permisos: ['asuntos_internos', 'read', 'write', 'export'],
+  },
+  {
+    username: 'rurales_admin',
+    password: 'Rurales_2024',
+    nombre: 'Administrador Delitos Rurales',
+    rol: Rol.ADMIN,
+    color: '#22c55e',
+    departamento: 'delitos_rurales',
+    permisos: ['delitos_rurales', 'read', 'write', 'export'],
+  },
+  {
+    username: 'digedrop_admin',
+    password: 'Digedrop_2024',
+    nombre: 'Administrador DIGEDROP',
+    rol: Rol.ADMIN,
+    color: '#dc2626',
+    departamento: 'digedrop',
+    permisos: ['digedrop', 'read', 'write', 'export'],
+  },
+  {
+    username: 'prevencion_admin',
+    password: 'Prevencion_2024',
+    nombre: 'Administrador Prevención',
+    rol: Rol.ADMIN,
+    color: '#06b6d4',
+    departamento: 'prevencion_ciudadana',
+    permisos: ['prevencion_ciudadana', 'read', 'write', 'export'],
+  },
+  {
+    username: 'especiales_admin',
+    password: 'Especiales_2024',
+    nombre: 'Administrador Unidades Especiales',
+    rol: Rol.ADMIN,
+    color: '#ea580c',
+    departamento: 'unidades_especiales',
+    permisos: ['unidades_especiales', 'read', 'write', 'export'],
+  },
+  {
+    username: 'institutos_admin',
+    password: 'Institutos_2024',
+    nombre: 'Administrador Institutos',
+    rol: Rol.ADMIN,
+    color: '#2563eb',
+    departamento: 'institutos',
+    permisos: ['institutos', 'read', 'write', 'export'],
+  },
+  {
+    username: 'regionales_admin',
+    password: 'Regionales_2024',
+    nombre: 'Administrador Unidades Regionales',
+    rol: Rol.ADMIN,
+    color: '#7c3aed',
+    departamento: 'unidades_regionales',
+    permisos: ['unidades_regionales', 'read', 'write', 'export'],
+  },
 ];
 
 // Datos de tablas D1 - Personal
@@ -48,42 +212,102 @@ const tablasD1 = [
     tablaId: 'd1-total-personal-policial',
     nombre: 'Total de Personal Policial',
     datos: [
-      { filaId: 'fuerza_efectiva', label: 'FUERZA EFECTIVA', periodoAnterior: 11287, periodoActual: 12186 },
-      { filaId: 'poblacion', label: 'POBLACIÓN SEGÚN CENSO 2022', periodoAnterior: 1731820, periodoActual: 1731820 },
-      { filaId: 'densidad', label: 'DENSIDAD POLICIAL', periodoAnterior: 0.65, periodoActual: 0.70 },
+      {
+        filaId: 'fuerza_efectiva',
+        label: 'FUERZA EFECTIVA',
+        periodoAnterior: 11287,
+        periodoActual: 12186,
+      },
+      {
+        filaId: 'poblacion',
+        label: 'POBLACIÓN SEGÚN CENSO 2022',
+        periodoAnterior: 1731820,
+        periodoActual: 1731820,
+      },
+      {
+        filaId: 'densidad',
+        label: 'DENSIDAD POLICIAL',
+        periodoAnterior: 0.65,
+        periodoActual: 0.7,
+      },
     ],
   },
   {
     tablaId: 'd1-personal-por-tipo',
     nombre: 'Personal por Tipo',
     datos: [
-      { filaId: 'superior', label: 'PERSONAL SUPERIOR', periodoAnterior: 1087, periodoActual: 1178 },
-      { filaId: 'subalterno', label: 'PERSONAL SUBALTERNO', periodoAnterior: 10200, periodoActual: 11008 },
+      {
+        filaId: 'superior',
+        label: 'PERSONAL SUPERIOR',
+        periodoAnterior: 1087,
+        periodoActual: 1178,
+      },
+      {
+        filaId: 'subalterno',
+        label: 'PERSONAL SUBALTERNO',
+        periodoAnterior: 10200,
+        periodoActual: 11008,
+      },
     ],
   },
   {
     tablaId: 'd1-personal-por-genero',
     nombre: 'Personal por Género',
     datos: [
-      { filaId: 'masculino', label: 'MASCULINO', periodoAnterior: 8616, periodoActual: 9334 },
-      { filaId: 'femenino', label: 'FEMENINO', periodoAnterior: 2661, periodoActual: 2854 },
+      {
+        filaId: 'masculino',
+        label: 'MASCULINO',
+        periodoAnterior: 8616,
+        periodoActual: 9334,
+      },
+      {
+        filaId: 'femenino',
+        label: 'FEMENINO',
+        periodoAnterior: 2661,
+        periodoActual: 2854,
+      },
     ],
   },
   {
     tablaId: 'd1-oficiales-superiores',
     nombre: 'Oficiales Superiores',
     datos: [
-      { filaId: 'comisario_general', label: 'Comisario General', periodoAnterior: 5, periodoActual: 5 },
-      { filaId: 'comisario_mayor', label: 'Comisario Mayor', periodoAnterior: 24, periodoActual: 26 },
-      { filaId: 'comisario_inspector', label: 'Comisario Inspector', periodoAnterior: 67, periodoActual: 72 },
+      {
+        filaId: 'comisario_general',
+        label: 'Comisario General',
+        periodoAnterior: 5,
+        periodoActual: 5,
+      },
+      {
+        filaId: 'comisario_mayor',
+        label: 'Comisario Mayor',
+        periodoAnterior: 24,
+        periodoActual: 26,
+      },
+      {
+        filaId: 'comisario_inspector',
+        label: 'Comisario Inspector',
+        periodoAnterior: 67,
+        periodoActual: 72,
+      },
     ],
   },
   {
     tablaId: 'd1-oficiales-jefes',
     nombre: 'Oficiales Jefes',
     datos: [
-      { filaId: 'comisario', label: 'Comisario', periodoAnterior: 138, periodoActual: 148 },
-      { filaId: 'subcomisario', label: 'Subcomisario', periodoAnterior: 208, periodoActual: 223 },
+      {
+        filaId: 'comisario',
+        label: 'Comisario',
+        periodoAnterior: 138,
+        periodoActual: 148,
+      },
+      {
+        filaId: 'subcomisario',
+        label: 'Subcomisario',
+        periodoAnterior: 208,
+        periodoActual: 223,
+      },
     ],
   },
 ];
@@ -94,17 +318,42 @@ const tablasD3 = [
     tablaId: 'd3-delitos-propiedad',
     nombre: 'Delitos Contra la Propiedad',
     datos: [
-      { filaId: 'hurto', label: 'HURTO', periodoAnterior: 3245, periodoActual: 2987 },
-      { filaId: 'robo', label: 'ROBO', periodoAnterior: 1876, periodoActual: 1654 },
-      { filaId: 'robo_agravado', label: 'ROBO AGRAVADO', periodoAnterior: 543, periodoActual: 489 },
+      {
+        filaId: 'hurto',
+        label: 'HURTO',
+        periodoAnterior: 3245,
+        periodoActual: 2987,
+      },
+      {
+        filaId: 'robo',
+        label: 'ROBO',
+        periodoAnterior: 1876,
+        periodoActual: 1654,
+      },
+      {
+        filaId: 'robo_agravado',
+        label: 'ROBO AGRAVADO',
+        periodoAnterior: 543,
+        periodoActual: 489,
+      },
     ],
   },
   {
     tablaId: 'd3-homicidios',
     nombre: 'Homicidios',
     datos: [
-      { filaId: 'doloso', label: 'HOMICIDIO DOLOSO', periodoAnterior: 45, periodoActual: 38 },
-      { filaId: 'culposo', label: 'HOMICIDIO CULPOSO', periodoAnterior: 123, periodoActual: 98 },
+      {
+        filaId: 'doloso',
+        label: 'HOMICIDIO DOLOSO',
+        periodoAnterior: 45,
+        periodoActual: 38,
+      },
+      {
+        filaId: 'culposo',
+        label: 'HOMICIDIO CULPOSO',
+        periodoAnterior: 123,
+        periodoActual: 98,
+      },
     ],
   },
 ];
@@ -115,18 +364,48 @@ const tablasD4 = [
     tablaId: 'd4-armamento',
     nombre: 'Armamento Total',
     datos: [
-      { filaId: 'pistolas', label: 'PISTOLAS 9MM', periodoAnterior: 8500, periodoActual: 9200 },
-      { filaId: 'escopetas', label: 'ESCOPETAS', periodoAnterior: 1200, periodoActual: 1350 },
-      { filaId: 'chalecos', label: 'CHALECOS ANTIBALAS', periodoAnterior: 5600, periodoActual: 6100 },
+      {
+        filaId: 'pistolas',
+        label: 'PISTOLAS 9MM',
+        periodoAnterior: 8500,
+        periodoActual: 9200,
+      },
+      {
+        filaId: 'escopetas',
+        label: 'ESCOPETAS',
+        periodoAnterior: 1200,
+        periodoActual: 1350,
+      },
+      {
+        filaId: 'chalecos',
+        label: 'CHALECOS ANTIBALAS',
+        periodoAnterior: 5600,
+        periodoActual: 6100,
+      },
     ],
   },
   {
     tablaId: 'd4-vehiculos',
     nombre: 'Vehículos',
     datos: [
-      { filaId: 'patrulleros', label: 'PATRULLEROS', periodoAnterior: 450, periodoActual: 520 },
-      { filaId: 'motos', label: 'MOTOCICLETAS', periodoAnterior: 380, periodoActual: 420 },
-      { filaId: 'otros', label: 'OTROS VEHÍCULOS', periodoAnterior: 120, periodoActual: 145 },
+      {
+        filaId: 'patrulleros',
+        label: 'PATRULLEROS',
+        periodoAnterior: 450,
+        periodoActual: 520,
+      },
+      {
+        filaId: 'motos',
+        label: 'MOTOCICLETAS',
+        periodoAnterior: 380,
+        periodoActual: 420,
+      },
+      {
+        filaId: 'otros',
+        label: 'OTROS VEHÍCULOS',
+        periodoAnterior: 120,
+        periodoActual: 145,
+      },
     ],
   },
 ];
@@ -137,17 +416,42 @@ const tablasDiGEDROP = [
     tablaId: 'digedrop-sustancias',
     nombre: 'Sustancias Secuestradas',
     datos: [
-      { filaId: 'cocaina', label: 'COCAÍNA (kg)', periodoAnterior: 156.5, periodoActual: 189.3 },
-      { filaId: 'marihuana', label: 'MARIHUANA (kg)', periodoAnterior: 2345.8, periodoActual: 2890.4 },
-      { filaId: 'pasta_base', label: 'PASTA BASE (kg)', periodoAnterior: 45.2, periodoActual: 67.8 },
+      {
+        filaId: 'cocaina',
+        label: 'COCAÍNA (kg)',
+        periodoAnterior: 156.5,
+        periodoActual: 189.3,
+      },
+      {
+        filaId: 'marihuana',
+        label: 'MARIHUANA (kg)',
+        periodoAnterior: 2345.8,
+        periodoActual: 2890.4,
+      },
+      {
+        filaId: 'pasta_base',
+        label: 'PASTA BASE (kg)',
+        periodoAnterior: 45.2,
+        periodoActual: 67.8,
+      },
     ],
   },
   {
     tablaId: 'digedrop-operativos',
     nombre: 'Operativos Realizados',
     datos: [
-      { filaId: 'allanamientos', label: 'ALLANAMIENTOS', periodoAnterior: 234, periodoActual: 287 },
-      { filaId: 'detenidos', label: 'DETENIDOS', periodoAnterior: 456, periodoActual: 534 },
+      {
+        filaId: 'allanamientos',
+        label: 'ALLANAMIENTOS',
+        periodoAnterior: 234,
+        periodoActual: 287,
+      },
+      {
+        filaId: 'detenidos',
+        label: 'DETENIDOS',
+        periodoAnterior: 456,
+        periodoActual: 534,
+      },
     ],
   },
 ];
@@ -201,7 +505,9 @@ async function seed() {
     console.log('\n👥 Creando usuarios...');
     for (const userData of usuarios) {
       const passwordHash = await hashPassword(userData.password);
-      const departamentoId = userData.departamento ? deptMap.get(userData.departamento) : null;
+      const departamentoId = userData.departamento
+        ? deptMap.get(userData.departamento)
+        : null;
 
       const user = await prisma.usuario.create({
         data: {
@@ -222,7 +528,9 @@ async function seed() {
         })),
       });
 
-      console.log(`   ✓ ${userData.username} (${userData.permisos.join(', ')})`);
+      console.log(
+        `   ✓ ${userData.username} (${userData.permisos.join(', ')})`
+      );
     }
 
     // Crear tablas y datos - D1
@@ -337,11 +645,17 @@ async function seed() {
     console.log('\n📋 Resumen:');
     console.log(`   - ${departamentos.length} departamentos`);
     console.log(`   - ${usuarios.length} usuarios`);
-    console.log(`   - ${tablasD1.length + tablasD3.length + tablasD4.length + tablasDiGEDROP.length} tablas`);
+    console.log(
+      `   - ${
+        tablasD1.length +
+        tablasD3.length +
+        tablasD4.length +
+        tablasDiGEDROP.length
+      } tablas`
+    );
     console.log('\n🔑 Credenciales de superadmin:');
     console.log('   Usuario: superadmin');
     console.log('   Contraseña: SIGEP_2024');
-
   } catch (error) {
     console.error('❌ Error durante el seed:', error);
     throw error;

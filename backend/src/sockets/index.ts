@@ -30,11 +30,8 @@ interface ServerToClientEvents {
     usuario: string;
     timestamp: string;
   }) => void;
-  'config:periodo': (data: {
-    periodo: any;
-    timestamp: string;
-  }) => void;
-  'error': (data: { message: string }) => void;
+  'config:periodo': (data: { periodo: any; timestamp: string }) => void;
+  error: (data: { message: string }) => void;
 }
 
 interface ClientToServerEvents {
@@ -54,23 +51,27 @@ interface SocketData {
 
 // Inicializar Socket.IO
 export function initializeSocketIO(httpServer: HttpServer): Server {
-  io = new Server<ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData>(
-    httpServer,
-    {
-      cors: {
-        origin: config.corsOrigin,
-        methods: ['GET', 'POST'],
-        credentials: true,
-      },
-      pingTimeout: 60000,
-      pingInterval: 25000,
-    }
-  );
+  io = new Server<
+    ClientToServerEvents,
+    ServerToClientEvents,
+    InterServerEvents,
+    SocketData
+  >(httpServer, {
+    cors: {
+      origin: config.corsOrigin,
+      methods: ['GET', 'POST'],
+      credentials: true,
+    },
+    pingTimeout: 60000,
+    pingInterval: 25000,
+  });
 
   // Middleware de autenticación
   io.use(async (socket, next) => {
     try {
-      const token = socket.handshake.auth.token || socket.handshake.headers.authorization?.split(' ')[1];
+      const token =
+        socket.handshake.auth.token ||
+        socket.handshake.headers.authorization?.split(' ')[1];
 
       if (!token) {
         return next(new Error('Token no proporcionado'));
@@ -96,48 +97,66 @@ export function initializeSocketIO(httpServer: HttpServer): Server {
   });
 
   // Manejar conexiones
-  io.on('connection', (socket: Socket<ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData>) => {
-    console.log(`🔌 Usuario conectado: ${socket.data.username} (${socket.id})`);
+  io.on(
+    'connection',
+    (
+      socket: Socket<
+        ClientToServerEvents,
+        ServerToClientEvents,
+        InterServerEvents,
+        SocketData
+      >
+    ) => {
+      console.log(
+        `🔌 Usuario conectado: ${socket.data.username} (${socket.id})`
+      );
 
-    // Unirse a room general
-    socket.join('general');
+      // Unirse a room general
+      socket.join('general');
 
-    // Notificar a otros usuarios
-    socket.broadcast.emit('usuario:conectado', {
-      usuario: socket.data.username,
-      departamento: socket.data.departamento,
-      timestamp: new Date().toISOString(),
-    });
-
-    // Unirse a room de departamento
-    socket.on('join:departamento', (departamento: string) => {
-      socket.data.departamento = departamento;
-      socket.join(`departamento:${departamento}`);
-      console.log(`📁 ${socket.data.username} se unió a departamento: ${departamento}`);
-    });
-
-    // Salir de room de departamento
-    socket.on('leave:departamento', (departamento: string) => {
-      socket.leave(`departamento:${departamento}`);
-      console.log(`📁 ${socket.data.username} salió de departamento: ${departamento}`);
-    });
-
-    // Desconexión
-    socket.on('disconnect', (reason) => {
-      console.log(`🔌 Usuario desconectado: ${socket.data.username} (${reason})`);
-
-      socket.broadcast.emit('usuario:desconectado', {
+      // Notificar a otros usuarios
+      socket.broadcast.emit('usuario:conectado', {
         usuario: socket.data.username,
+        departamento: socket.data.departamento,
         timestamp: new Date().toISOString(),
       });
-    });
 
-    // Manejo de errores
-    socket.on('error', (error) => {
-      console.error(`❌ Error en socket ${socket.id}:`, error);
-      socket.emit('error', { message: error.message });
-    });
-  });
+      // Unirse a room de departamento
+      socket.on('join:departamento', (departamento: string) => {
+        socket.data.departamento = departamento;
+        socket.join(`departamento:${departamento}`);
+        console.log(
+          `📁 ${socket.data.username} se unió a departamento: ${departamento}`
+        );
+      });
+
+      // Salir de room de departamento
+      socket.on('leave:departamento', (departamento: string) => {
+        socket.leave(`departamento:${departamento}`);
+        console.log(
+          `📁 ${socket.data.username} salió de departamento: ${departamento}`
+        );
+      });
+
+      // Desconexión
+      socket.on('disconnect', reason => {
+        console.log(
+          `🔌 Usuario desconectado: ${socket.data.username} (${reason})`
+        );
+
+        socket.broadcast.emit('usuario:desconectado', {
+          usuario: socket.data.username,
+          timestamp: new Date().toISOString(),
+        });
+      });
+
+      // Manejo de errores
+      socket.on('error', error => {
+        console.error(`❌ Error en socket ${socket.id}:`, error);
+        socket.emit('error', { message: error.message });
+      });
+    }
+  );
 
   console.log('✅ Socket.IO inicializado');
 
@@ -153,7 +172,11 @@ export function getSocketIO(): Server {
 }
 
 // Emitir a un departamento específico
-export function emitToDepartamento(departamento: string, event: string, data: any): void {
+export function emitToDepartamento(
+  departamento: string,
+  event: string,
+  data: any
+): void {
   if (io) {
     io.to(`departamento:${departamento}`).emit(event as any, data);
   }

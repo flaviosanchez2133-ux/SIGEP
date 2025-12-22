@@ -19,17 +19,21 @@ const app = express();
 const httpServer = createServer(app);
 
 // Middlewares de seguridad
-app.use(helmet({
-  contentSecurityPolicy: false, // Desactivar para desarrollo
-}));
+app.use(
+  helmet({
+    contentSecurityPolicy: false, // Desactivar para desarrollo
+  })
+);
 
 // CORS
-app.use(cors({
-  origin: config.corsOrigin,
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-}));
+app.use(
+  cors({
+    origin: config.corsOrigin,
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+  })
+);
 
 // Logging
 if (config.isDev) {

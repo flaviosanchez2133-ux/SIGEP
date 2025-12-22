@@ -10,7 +10,10 @@ const createUserSchema = z.object({
   password: z.string().min(6),
   nombre: z.string().min(1).max(100),
   rol: z.enum(['ADMIN', 'EDITOR', 'VIEWER']).default('EDITOR'),
-  color: z.string().regex(/^#[0-9A-Fa-f]{6}$/).optional(),
+  color: z
+    .string()
+    .regex(/^#[0-9A-Fa-f]{6}$/)
+    .optional(),
   departamentoId: z.string().uuid().optional(),
   permisos: z.array(z.string()).optional(),
 });
@@ -18,7 +21,10 @@ const createUserSchema = z.object({
 const updateUserSchema = z.object({
   nombre: z.string().min(1).max(100).optional(),
   rol: z.enum(['ADMIN', 'EDITOR', 'VIEWER']).optional(),
-  color: z.string().regex(/^#[0-9A-Fa-f]{6}$/).optional(),
+  color: z
+    .string()
+    .regex(/^#[0-9A-Fa-f]{6}$/)
+    .optional(),
   departamentoId: z.string().uuid().nullable().optional(),
   activo: z.boolean().optional(),
   permisos: z.array(z.string()).optional(),
@@ -29,7 +35,11 @@ const changePasswordSchema = z.object({
 });
 
 // Listar usuarios
-export async function listUsers(req: Request, res: Response, next: NextFunction): Promise<void> {
+export async function listUsers(
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> {
   try {
     const usuarios = await prisma.usuario.findMany({
       include: {
@@ -59,7 +69,11 @@ export async function listUsers(req: Request, res: Response, next: NextFunction)
 }
 
 // Obtener usuario por ID
-export async function getUser(req: Request, res: Response, next: NextFunction): Promise<void> {
+export async function getUser(
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> {
   try {
     const { id } = req.params;
 
@@ -93,7 +107,11 @@ export async function getUser(req: Request, res: Response, next: NextFunction): 
 }
 
 // Crear usuario
-export async function createUser(req: Request, res: Response, next: NextFunction): Promise<void> {
+export async function createUser(
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> {
   try {
     const data = createUserSchema.parse(req.body);
 
@@ -136,7 +154,11 @@ export async function createUser(req: Request, res: Response, next: NextFunction
 }
 
 // Actualizar usuario
-export async function updateUser(req: Request, res: Response, next: NextFunction): Promise<void> {
+export async function updateUser(
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> {
   try {
     const { id } = req.params;
     const data = updateUserSchema.parse(req.body);
@@ -145,7 +167,7 @@ export async function updateUser(req: Request, res: Response, next: NextFunction
     if (data.permisos) {
       // Eliminar permisos existentes
       await prisma.permiso.deleteMany({ where: { usuarioId: id } });
-      
+
       // Crear nuevos permisos
       await prisma.permiso.createMany({
         data: data.permisos.map(tipo => ({ usuarioId: id, tipo })),
@@ -183,7 +205,11 @@ export async function updateUser(req: Request, res: Response, next: NextFunction
 }
 
 // Eliminar usuario
-export async function deleteUser(req: Request, res: Response, next: NextFunction): Promise<void> {
+export async function deleteUser(
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> {
   try {
     const { id } = req.params;
 
@@ -206,7 +232,11 @@ export async function deleteUser(req: Request, res: Response, next: NextFunction
 }
 
 // Cambiar contraseña
-export async function changePassword(req: Request, res: Response, next: NextFunction): Promise<void> {
+export async function changePassword(
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> {
   try {
     const { id } = req.params;
     const { newPassword } = changePasswordSchema.parse(req.body);

@@ -22,7 +22,11 @@ const refreshSchema = z.object({
 });
 
 // Login
-export async function login(req: Request, res: Response, next: NextFunction): Promise<void> {
+export async function login(
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> {
   try {
     const { username, password } = loginSchema.parse(req.body);
 
@@ -79,7 +83,11 @@ export async function login(req: Request, res: Response, next: NextFunction): Pr
 }
 
 // Logout
-export async function logout(req: Request, res: Response, next: NextFunction): Promise<void> {
+export async function logout(
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> {
   try {
     const { refreshToken } = refreshSchema.parse(req.body);
 
@@ -102,7 +110,11 @@ export async function logout(req: Request, res: Response, next: NextFunction): P
 }
 
 // Refresh Token
-export async function refresh(req: Request, res: Response, next: NextFunction): Promise<void> {
+export async function refresh(
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> {
   try {
     const { refreshToken } = refreshSchema.parse(req.body);
 
@@ -110,7 +122,10 @@ export async function refresh(req: Request, res: Response, next: NextFunction): 
     const payload = verifyRefreshToken(refreshToken);
 
     // Verificar si está en Redis
-    const isValid = await redisCache.isRefreshTokenValid(payload.userId, refreshToken);
+    const isValid = await redisCache.isRefreshTokenValid(
+      payload.userId,
+      refreshToken
+    );
     if (!isValid) {
       throw new AppError('Refresh token inválido', 401);
     }
@@ -149,7 +164,11 @@ export async function refresh(req: Request, res: Response, next: NextFunction): 
 }
 
 // Obtener usuario actual
-export async function me(req: Request, res: Response, next: NextFunction): Promise<void> {
+export async function me(
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> {
   try {
     if (!req.user) {
       throw new AppError('No autenticado', 401);

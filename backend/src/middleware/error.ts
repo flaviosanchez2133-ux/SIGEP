@@ -18,12 +18,14 @@ export class AppError extends Error {
 
 // Errores comunes
 export const Errors = {
-  NotFound: (resource = 'Recurso') => new AppError(`${resource} no encontrado`, 404),
+  NotFound: (resource = 'Recurso') =>
+    new AppError(`${resource} no encontrado`, 404),
   Unauthorized: (message = 'No autorizado') => new AppError(message, 401),
   Forbidden: (message = 'Acceso denegado') => new AppError(message, 403),
   BadRequest: (message = 'Solicitud inválida') => new AppError(message, 400),
   Conflict: (message = 'Conflicto') => new AppError(message, 409),
-  Internal: (message = 'Error interno del servidor') => new AppError(message, 500),
+  Internal: (message = 'Error interno del servidor') =>
+    new AppError(message, 500),
 };
 
 // Middleware de manejo de errores
@@ -56,7 +58,7 @@ export function errorHandler(
   // Error de Prisma
   if (err.name === 'PrismaClientKnownRequestError') {
     const prismaError = err as any;
-    
+
     switch (prismaError.code) {
       case 'P2002':
         res.status(409).json({

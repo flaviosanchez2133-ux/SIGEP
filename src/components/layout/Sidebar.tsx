@@ -21,6 +21,7 @@ import {
   MapPin,
   Home,
   BarChart3,
+  Zap,
 } from 'lucide-react';
 import clsx from 'clsx';
 
@@ -175,32 +176,54 @@ export function Sidebar() {
   return (
     <aside
       className={clsx(
-        'fixed left-0 top-0 h-full bg-policia-primary text-white transition-all duration-300 z-50 flex flex-col',
+        'fixed left-0 top-0 h-full transition-all duration-500 z-50 flex flex-col',
+        'bg-gradient-to-b from-dark-900 via-dark-800 to-dark-900',
+        'border-r border-blue-500/20',
         sidebarOpen ? 'w-72' : 'w-20'
       )}
+      style={{
+        boxShadow:
+          '0 0 30px rgba(59, 130, 246, 0.1), inset -1px 0 0 rgba(59, 130, 246, 0.1)',
+      }}
     >
+      {/* Efecto de escaneo vertical */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div
+          className="absolute w-full h-32 bg-gradient-to-b from-blue-500/5 via-blue-500/10 to-transparent"
+          style={{
+            animation: 'scan 8s ease-in-out infinite',
+          }}
+        />
+      </div>
+
       {/* Logo y toggle */}
-      <div className="flex items-center justify-between p-4 border-b border-white/10">
+      <div className="relative flex items-center justify-between p-4 border-b border-blue-500/20">
         <div
           className={clsx(
             'flex items-center gap-3',
             !sidebarOpen && 'justify-center w-full'
           )}
         >
-          <div className="w-10 h-10 bg-policia-secondary rounded-full flex items-center justify-center font-bold text-policia-primary">
-            <BarChart3 size={24} />
+          <div className="relative w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-700 rounded-xl flex items-center justify-center font-bold shadow-lg shadow-blue-500/30">
+            <BarChart3 size={24} className="text-white" />
+            <div className="absolute -top-1 -right-1">
+              <Zap size={14} className="text-amber-400 animate-pulse" />
+            </div>
           </div>
           {sidebarOpen && (
             <div className="animate-fadeIn">
-              <h1 className="font-bold text-lg leading-tight">SIGEP</h1>
-              <p className="text-xs text-white/70">Policía de Tucumán</p>
+              <h1 className="font-bold text-xl leading-tight text-white tracking-wider">
+                SIGEP
+              </h1>
+              <p className="text-xs text-blue-400/80">Policía de Tucumán</p>
             </div>
           )}
         </div>
         <button
           onClick={toggleSidebar}
           className={clsx(
-            'p-2 rounded-lg hover:bg-white/10 transition-colors',
+            'p-2 rounded-lg transition-all duration-300',
+            'hover:bg-blue-500/20 hover:shadow-glow-sm text-gray-400 hover:text-blue-400',
             !sidebarOpen && 'hidden'
           )}
         >
@@ -212,7 +235,7 @@ export function Sidebar() {
       {!sidebarOpen && (
         <button
           onClick={toggleSidebar}
-          className="p-4 hover:bg-white/10 transition-colors"
+          className="p-4 hover:bg-blue-500/10 transition-all duration-300 text-gray-400 hover:text-blue-400"
         >
           <Menu size={24} />
         </button>
@@ -239,27 +262,42 @@ export function Sidebar() {
                   navigate(item.path);
                 }}
                 className={clsx(
-                  'w-full sidebar-item',
-                  active && 'active',
+                  'w-full flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer transition-all duration-300',
+                  active
+                    ? 'bg-blue-500/20 shadow-inner-glow border-l-2 border-blue-400'
+                    : 'hover:bg-blue-500/10 border-l-2 border-transparent hover:border-blue-400/50',
                   !sidebarOpen && 'justify-center px-2'
                 )}
                 style={{
-                  borderLeft: active
-                    ? `4px solid ${item.color}`
-                    : '4px solid transparent',
+                  boxShadow: active
+                    ? `inset 0 0 20px rgba(59, 130, 246, 0.1), 0 0 10px ${item.color}20`
+                    : 'none',
                 }}
               >
-                <Icon size={20} style={{ color: item.color }} />
+                <div
+                  className="relative p-2 rounded-lg transition-all duration-300"
+                  style={{
+                    backgroundColor: active ? `${item.color}30` : 'transparent',
+                    boxShadow: active ? `0 0 15px ${item.color}40` : 'none',
+                  }}
+                >
+                  <Icon size={18} style={{ color: item.color }} />
+                </div>
                 {sidebarOpen && (
                   <>
-                    <span className="flex-1 text-left text-sm">
+                    <span
+                      className={clsx(
+                        'flex-1 text-left text-sm transition-colors duration-300',
+                        active ? 'text-white font-semibold' : 'text-gray-400'
+                      )}
+                    >
                       {item.label}
                     </span>
                     {hasChildren &&
                       (isExpanded ? (
-                        <ChevronDown size={16} />
+                        <ChevronDown size={16} className="text-gray-500" />
                       ) : (
-                        <ChevronRight size={16} />
+                        <ChevronRight size={16} className="text-gray-500" />
                       ))}
                   </>
                 )}
@@ -278,16 +316,30 @@ export function Sidebar() {
                         key={child.id}
                         onClick={() => navigate(child.path)}
                         className={clsx(
-                          'w-full text-left px-4 py-2 rounded-lg text-sm transition-all',
-                          'hover:bg-white/10',
-                          childActive && 'bg-white/20 font-medium'
+                          'w-full text-left px-4 py-2.5 rounded-lg text-sm transition-all duration-300',
+                          'hover:bg-blue-500/10',
+                          childActive
+                            ? 'bg-blue-500/20 font-medium text-white'
+                            : 'text-gray-400'
                         )}
                         style={{
                           borderLeft: `3px solid ${child.color}`,
                           marginLeft: '8px',
+                          boxShadow: childActive
+                            ? `0 0 15px ${child.color}30`
+                            : 'none',
                         }}
                       >
-                        {child.label}
+                        <div className="flex items-center gap-2">
+                          <div
+                            className="w-1.5 h-1.5 rounded-full"
+                            style={{
+                              backgroundColor: child.color,
+                              boxShadow: `0 0 8px ${child.color}`,
+                            }}
+                          />
+                          {child.label}
+                        </div>
                       </button>
                     );
                   })}
@@ -300,20 +352,31 @@ export function Sidebar() {
 
       {/* Usuario actual */}
       {sidebarOpen && user && (
-        <div className="p-4 border-t border-white/10">
-          <div className="flex items-center gap-3 p-3 rounded-lg bg-white/5">
+        <div className="p-4 border-t border-blue-500/20">
+          <div
+            className="flex items-center gap-3 p-3 rounded-xl bg-dark-800/50 border border-blue-500/10"
+            style={{
+              boxShadow: 'inset 0 0 20px rgba(59, 130, 246, 0.05)',
+            }}
+          >
             <div
-              className="w-10 h-10 rounded-full flex items-center justify-center"
-              style={{ backgroundColor: user.color }}
+              className="w-10 h-10 rounded-lg flex items-center justify-center shadow-lg"
+              style={{
+                backgroundColor: user.color,
+                boxShadow: `0 0 15px ${user.color}50`,
+              }}
             >
-              <User size={20} />
+              <User size={20} className="text-white" />
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium truncate">{user.nombre}</p>
-              <p className="text-xs text-white/60 truncate">
+              <p className="text-sm font-medium truncate text-white">
+                {user.nombre}
+              </p>
+              <p className="text-xs truncate text-blue-400/60">
                 {user.departamento}
               </p>
             </div>
+            <div className="led-indicator active" title="En línea" />
           </div>
         </div>
       )}

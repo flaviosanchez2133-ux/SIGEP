@@ -25,19 +25,28 @@ export interface SnapshotComparison {
 // Listar snapshots
 export const listSnapshots = async (anio?: number): Promise<Snapshot[]> => {
   const params = anio ? { anio } : {};
-  const response = await apiClient.get<ApiResponse<Snapshot[]>>('/snapshots', { params });
+  const response = await apiClient.get<ApiResponse<Snapshot[]>>('/snapshots', {
+    params,
+  });
   return response.data.data;
 };
 
 // Obtener snapshot por ID
 export const getSnapshot = async (id: string): Promise<Snapshot> => {
-  const response = await apiClient.get<ApiResponse<Snapshot>>(`/snapshots/${id}`);
+  const response = await apiClient.get<ApiResponse<Snapshot>>(
+    `/snapshots/${id}`
+  );
   return response.data.data;
 };
 
 // Crear snapshot
-export const createSnapshot = async (data: CreateSnapshotRequest): Promise<Snapshot> => {
-  const response = await apiClient.post<ApiResponse<Snapshot>>('/snapshots', data);
+export const createSnapshot = async (
+  data: CreateSnapshotRequest
+): Promise<Snapshot> => {
+  const response = await apiClient.post<ApiResponse<Snapshot>>(
+    '/snapshots',
+    data
+  );
   return response.data.data;
 };
 
@@ -47,9 +56,15 @@ export const deleteSnapshot = async (id: string): Promise<void> => {
 };
 
 // Comparar snapshots
-export const compareSnapshots = async (id1: string, id2: string): Promise<SnapshotComparison> => {
-  const response = await apiClient.get<ApiResponse<SnapshotComparison>>('/snapshots/compare', {
-    params: { id1, id2 },
-  });
+export const compareSnapshots = async (
+  id1: string,
+  id2: string
+): Promise<SnapshotComparison> => {
+  const response = await apiClient.get<ApiResponse<SnapshotComparison>>(
+    '/snapshots/compare',
+    {
+      params: { id1, id2 },
+    }
+  );
   return response.data.data;
 };

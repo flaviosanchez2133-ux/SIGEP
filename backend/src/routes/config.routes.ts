@@ -1,5 +1,9 @@
 import { Router } from 'express';
-import { getConfig, toggleEdicion, updatePeriodo } from '../controllers/config.controller.js';
+import {
+  getConfig,
+  toggleEdicion,
+  updatePeriodo,
+} from '../controllers/config.controller.js';
 import { authMiddleware, requireSuperAdmin } from '../middleware/auth.js';
 
 const router = Router();

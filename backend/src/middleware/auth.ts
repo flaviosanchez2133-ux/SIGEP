@@ -98,14 +98,20 @@ export function requirePermission(...permissions: string[]) {
 }
 
 // Middleware para superadmin
-export function requireSuperAdmin(req: Request, res: Response, next: NextFunction): void {
+export function requireSuperAdmin(
+  req: Request,
+  res: Response,
+  next: NextFunction
+): void {
   if (!req.user) {
     res.status(401).json({ error: 'No autenticado' });
     return;
   }
 
   if (!req.user.permisos.includes('all') && req.user.rol !== 'ADMIN') {
-    res.status(403).json({ error: 'Solo el superadministrador puede realizar esta acción' });
+    res
+      .status(403)
+      .json({ error: 'Solo el superadministrador puede realizar esta acción' });
     return;
   }
 

@@ -4,7 +4,7 @@ import { config } from './index.js';
 // Cliente Redis
 export const redis = new Redis(config.redisUrl, {
   maxRetriesPerRequest: 3,
-  retryStrategy: (times) => {
+  retryStrategy: times => {
     if (times > 3) {
       console.error('❌ No se pudo conectar a Redis después de 3 intentos');
       return null;
@@ -18,7 +18,7 @@ redis.on('connect', () => {
   console.log('✅ Conectado a Redis');
 });
 
-redis.on('error', (error) => {
+redis.on('error', error => {
   console.error('❌ Error de Redis:', error.message);
 });
 
@@ -29,7 +29,11 @@ redis.on('close', () => {
 // Funciones de utilidad para caché
 export const redisCache = {
   // Guardar con expiración
-  async set(key: string, value: unknown, expiresInSeconds?: number): Promise<void> {
+  async set(
+    key: string,
+    value: unknown,
+    expiresInSeconds?: number
+  ): Promise<void> {
     const data = JSON.stringify(value);
     if (expiresInSeconds) {
       await redis.setex(key, expiresInSeconds, data);
@@ -65,7 +69,11 @@ export const redisCache = {
   },
 
   // Guardar token de refresh
-  async setRefreshToken(userId: string, token: string, expiresInSeconds: number): Promise<void> {
+  async setRefreshToken(
+    userId: string,
+    token: string,
+    expiresInSeconds: number
+  ): Promise<void> {
     await redis.setex(`refresh:${userId}:${token}`, expiresInSeconds, 'valid');
   },
 

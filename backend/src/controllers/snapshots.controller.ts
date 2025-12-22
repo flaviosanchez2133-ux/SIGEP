@@ -3,7 +3,11 @@ import { prisma } from '../config/database.js';
 import { AppError } from '../middleware/error.js';
 
 // Listar snapshots
-export async function listSnapshots(req: Request, res: Response, next: NextFunction): Promise<void> {
+export async function listSnapshots(
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> {
   try {
     const snapshots = await prisma.snapshot.findMany({
       include: {
@@ -12,21 +16,27 @@ export async function listSnapshots(req: Request, res: Response, next: NextFunct
       orderBy: [{ anio: 'desc' }, { mes: 'desc' }],
     });
 
-    res.json(snapshots.map(s => ({
-      id: s.id,
-      mes: s.mes,
-      año: s.anio,
-      fechaCreacion: s.fechaCreacion.toISOString(),
-      creadoPor: s.creadoPor.nombre,
-      tablasCount: Object.keys(s.datos as object).length,
-    })));
+    res.json(
+      snapshots.map(s => ({
+        id: s.id,
+        mes: s.mes,
+        año: s.anio,
+        fechaCreacion: s.fechaCreacion.toISOString(),
+        creadoPor: s.creadoPor.nombre,
+        tablasCount: Object.keys(s.datos as object).length,
+      }))
+    );
   } catch (error) {
     next(error);
   }
 }
 
 // Obtener snapshot
-export async function getSnapshot(req: Request, res: Response, next: NextFunction): Promise<void> {
+export async function getSnapshot(
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> {
   try {
     const { anio, mes } = req.params;
 
@@ -60,7 +70,11 @@ export async function getSnapshot(req: Request, res: Response, next: NextFunctio
 }
 
 // Crear snapshot
-export async function createSnapshot(req: Request, res: Response, next: NextFunction): Promise<void> {
+export async function createSnapshot(
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> {
   try {
     if (!req.user) {
       throw new AppError('No autenticado', 401);
@@ -120,7 +134,11 @@ export async function createSnapshot(req: Request, res: Response, next: NextFunc
 }
 
 // Comparar snapshots
-export async function compareSnapshots(req: Request, res: Response, next: NextFunction): Promise<void> {
+export async function compareSnapshots(
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> {
   try {
     const { id1, id2 } = req.params;
 
@@ -151,12 +169,15 @@ export async function compareSnapshots(req: Request, res: Response, next: NextFu
     const tablasMap = new Map(tablasConfig.map(t => [t.tablaId, t.nombre]));
 
     // Comparar cada tabla
-    const allTablaIds = new Set([...Object.keys(datos1), ...Object.keys(datos2)]);
+    const allTablaIds = new Set([
+      ...Object.keys(datos1),
+      ...Object.keys(datos2),
+    ]);
 
     for (const tablaId of allTablaIds) {
       const filas1 = datos1[tablaId] || [];
       const filas2 = datos2[tablaId] || [];
-      
+
       const tablaDiferencias: Array<{
         fila: string;
         campo: string;
@@ -212,7 +233,11 @@ export async function compareSnapshots(req: Request, res: Response, next: NextFu
 }
 
 // Eliminar snapshot
-export async function deleteSnapshot(req: Request, res: Response, next: NextFunction): Promise<void> {
+export async function deleteSnapshot(
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> {
   try {
     const { id } = req.params;
 

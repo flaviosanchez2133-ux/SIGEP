@@ -14,7 +14,10 @@ export interface LoginResponse {
 
 // Login
 export const login = async (credentials: LoginRequest): Promise<Usuario> => {
-  const response = await apiClient.post<ApiResponse<LoginResponse>>('/auth/login', credentials);
+  const response = await apiClient.post<ApiResponse<LoginResponse>>(
+    '/auth/login',
+    credentials
+  );
   const { user, accessToken, refreshToken } = response.data.data;
   setTokens({ accessToken, refreshToken });
   return user;
@@ -36,7 +39,12 @@ export const getCurrentUser = async (): Promise<Usuario> => {
 };
 
 // Refresh token (manejado automáticamente por el interceptor)
-export const refreshTokens = async (refreshToken: string): Promise<AuthTokens> => {
-  const response = await apiClient.post<ApiResponse<AuthTokens>>('/auth/refresh', { refreshToken });
+export const refreshTokens = async (
+  refreshToken: string
+): Promise<AuthTokens> => {
+  const response = await apiClient.post<ApiResponse<AuthTokens>>(
+    '/auth/refresh',
+    { refreshToken }
+  );
   return response.data.data;
 };

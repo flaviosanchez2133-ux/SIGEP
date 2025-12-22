@@ -4,7 +4,11 @@ import { prisma } from '../config/database.js';
 import { getSocketIO } from '../sockets/index.js';
 
 // Obtener configuración global
-export async function getConfig(req: Request, res: Response, next: NextFunction): Promise<void> {
+export async function getConfig(
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> {
   try {
     let config = await prisma.configGlobal.findFirst();
 
@@ -20,18 +24,20 @@ export async function getConfig(req: Request, res: Response, next: NextFunction)
 
     res.json({
       edicionHabilitada: config.edicionHabilitada,
-      periodo: periodo ? {
-        anterior: {
-          inicio: periodo.anteriorInicio,
-          fin: periodo.anteriorFin,
-          label: periodo.anteriorLabel,
-        },
-        actual: {
-          inicio: periodo.actualInicio,
-          fin: periodo.actualFin,
-          label: periodo.actualLabel,
-        },
-      } : null,
+      periodo: periodo
+        ? {
+            anterior: {
+              inicio: periodo.anteriorInicio,
+              fin: periodo.anteriorFin,
+              label: periodo.anteriorLabel,
+            },
+            actual: {
+              inicio: periodo.actualInicio,
+              fin: periodo.actualFin,
+              label: periodo.actualLabel,
+            },
+          }
+        : null,
     });
   } catch (error) {
     next(error);
@@ -39,7 +45,11 @@ export async function getConfig(req: Request, res: Response, next: NextFunction)
 }
 
 // Toggle edición
-export async function toggleEdicion(req: Request, res: Response, next: NextFunction): Promise<void> {
+export async function toggleEdicion(
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> {
   try {
     if (!req.user) {
       res.status(401).json({ error: 'No autenticado' });
@@ -55,7 +65,7 @@ export async function toggleEdicion(req: Request, res: Response, next: NextFunct
     } else {
       config = await prisma.configGlobal.update({
         where: { id: config.id },
-        data: { 
+        data: {
           edicionHabilitada: !config.edicionHabilitada,
           updatedBy: req.user.userId,
         },
@@ -72,7 +82,9 @@ export async function toggleEdicion(req: Request, res: Response, next: NextFunct
 
     res.json({
       edicionHabilitada: config.edicionHabilitada,
-      message: `Edición ${config.edicionHabilitada ? 'habilitada' : 'deshabilitada'}`,
+      message: `Edición ${
+        config.edicionHabilitada ? 'habilitada' : 'deshabilitada'
+      }`,
     });
   } catch (error) {
     next(error);
@@ -93,7 +105,11 @@ const updatePeriodoSchema = z.object({
   }),
 });
 
-export async function updatePeriodo(req: Request, res: Response, next: NextFunction): Promise<void> {
+export async function updatePeriodo(
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> {
   try {
     const data = updatePeriodoSchema.parse(req.body);
 
@@ -120,8 +136,16 @@ export async function updatePeriodo(req: Request, res: Response, next: NextFunct
     const io = getSocketIO();
     io.emit('config:periodo', {
       periodo: {
-        anterior: { inicio: periodo.anteriorInicio, fin: periodo.anteriorFin, label: periodo.anteriorLabel },
-        actual: { inicio: periodo.actualInicio, fin: periodo.actualFin, label: periodo.actualLabel },
+        anterior: {
+          inicio: periodo.anteriorInicio,
+          fin: periodo.anteriorFin,
+          label: periodo.anteriorLabel,
+        },
+        actual: {
+          inicio: periodo.actualInicio,
+          fin: periodo.actualFin,
+          label: periodo.actualLabel,
+        },
       },
       timestamp: new Date().toISOString(),
     });

@@ -8,7 +8,8 @@ import { socketService, DatoActualizadoEvent } from '../services/socket';
 export const datosKeys = {
   departamentos: ['departamentos'] as const,
   tablas: (departamentoId: string) => ['tablas', departamentoId] as const,
-  tabla: (departamentoId: string, tablaId: string) => ['tablas', departamentoId, tablaId] as const,
+  tabla: (departamentoId: string, tablaId: string) =>
+    ['tablas', departamentoId, tablaId] as const,
 };
 
 // Hook para listar departamentos
@@ -21,9 +22,14 @@ export function useDepartamentos() {
 }
 
 // Hook para obtener tablas de un departamento
-export function useTablasDepartamento(departamentoId: string, tablaId?: string) {
+export function useTablasDepartamento(
+  departamentoId: string,
+  tablaId?: string
+) {
   return useQuery({
-    queryKey: tablaId ? datosKeys.tabla(departamentoId, tablaId) : datosKeys.tablas(departamentoId),
+    queryKey: tablaId
+      ? datosKeys.tabla(departamentoId, tablaId)
+      : datosKeys.tablas(departamentoId),
     queryFn: () => datosService.getDatosTabla(departamentoId, tablaId),
     enabled: !!departamentoId,
     staleTime: 2 * 60 * 1000, // 2 minutos
@@ -35,10 +41,13 @@ export function useUpdateDato(departamentoId: string, tablaId: string) {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (data: UpdateDatoRequest) => datosService.updateDato(departamentoId, tablaId, data),
+    mutationFn: (data: UpdateDatoRequest) =>
+      datosService.updateDato(departamentoId, tablaId, data),
     onSuccess: () => {
       // Invalidar queries relacionadas
-      queryClient.invalidateQueries({ queryKey: datosKeys.tablas(departamentoId) });
+      queryClient.invalidateQueries({
+        queryKey: datosKeys.tablas(departamentoId),
+      });
     },
   });
 }
@@ -54,12 +63,16 @@ export function useRealtimeDatos(departamentoId?: string) {
     socketService.joinDepartamento(departamentoId);
 
     // Suscribirse a actualizaciones
-    const unsubscribe = socketService.subscribeDatoActualizado((event: DatoActualizadoEvent) => {
-      // Si es del departamento actual, invalidar queries
-      if (event.departamentoId === departamentoId) {
-        queryClient.invalidateQueries({ queryKey: datosKeys.tablas(departamentoId) });
+    const unsubscribe = socketService.subscribeDatoActualizado(
+      (event: DatoActualizadoEvent) => {
+        // Si es del departamento actual, invalidar queries
+        if (event.departamentoId === departamentoId) {
+          queryClient.invalidateQueries({
+            queryKey: datosKeys.tablas(departamentoId),
+          });
+        }
       }
-    });
+    );
 
     return () => {
       socketService.leaveDepartamento(departamentoId);

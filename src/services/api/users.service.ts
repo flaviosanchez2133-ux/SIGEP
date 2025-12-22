@@ -39,13 +39,22 @@ export const createUser = async (data: CreateUserRequest): Promise<Usuario> => {
 };
 
 // Actualizar usuario
-export const updateUser = async (id: string, data: UpdateUserRequest): Promise<Usuario> => {
-  const response = await apiClient.put<ApiResponse<Usuario>>(`/users/${id}`, data);
+export const updateUser = async (
+  id: string,
+  data: UpdateUserRequest
+): Promise<Usuario> => {
+  const response = await apiClient.put<ApiResponse<Usuario>>(
+    `/users/${id}`,
+    data
+  );
   return response.data.data;
 };
 
 // Cambiar contraseña
-export const changePassword = async (id: string, password: string): Promise<void> => {
+export const changePassword = async (
+  id: string,
+  password: string
+): Promise<void> => {
   await apiClient.patch(`/users/${id}/password`, { password });
 };
 
