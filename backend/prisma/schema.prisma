@@ -1,0 +1,200 @@
+// Schema de Prisma para SIGEP
+// Sistema de Gestión Estadística Policial
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================
+// USUARIOS Y AUTENTICACIÓN
+// ============================================
+
+model Usuario {
+  id            String    @id @default(uuid())
+  username      String    @unique
+  passwordHash  String    @map("password_hash")
+  nombre        String
+  rol           Rol       @default(EDITOR)
+  color         String    @default("#1e3a5f")
+  activo        Boolean   @default(true)
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+  
+  // Relaciones
+  departamentoId String?        @map("departamento_id")
+  departamento   Departamento?  @relation(fields: [departamentoId], references: [id])
+  permisos       Permiso[]
+  historial      HistorialCambio[]
+  snapshots      Snapshot[]
+  refreshTokens  RefreshToken[]
+
+  @@map("usuarios")
+}
+
+enum Rol {
+  ADMIN
+  EDITOR
+  VIEWER
+}
+
+model Permiso {
+  id        String   @id @default(uuid())
+  tipo      String   // 'read', 'write', 'export', 'admin', 'all'
+  createdAt DateTime @default(now()) @map("created_at")
+  
+  usuarioId String  @map("usuario_id")
+  usuario   Usuario @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+
+  @@unique([usuarioId, tipo])
+  @@map("permisos")
+}
+
+model RefreshToken {
+  id        String   @id @default(uuid())
+  token     String   @unique
+  expiresAt DateTime @map("expires_at")
+  createdAt DateTime @default(now()) @map("created_at")
+  
+  usuarioId String  @map("usuario_id")
+  usuario   Usuario @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+
+  @@map("refresh_tokens")
+}
+
+// ============================================
+// DEPARTAMENTOS Y TABLAS
+// ============================================
+
+model Departamento {
+  id        String   @id @default(uuid())
+  codigo    String   @unique  // 'd1', 'd2', 'digedrop', etc.
+  nombre    String
+  color     String   @default("#1e3a5f")
+  orden     Int      @default(0)
+  activo    Boolean  @default(true)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  
+  // Relaciones
+  usuarios Usuario[]
+  tablas   TablaConfig[]
+
+  @@map("departamentos")
+}
+
+model TablaConfig {
+  id        String   @id @default(uuid())
+  tablaId   String   @unique @map("tabla_id")  // Identificador único ej: 'd1-personal-por-tipo'
+  nombre    String
+  orden     Int      @default(0)
+  activo    Boolean  @default(true)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  
+  // Relaciones
+  departamentoId String       @map("departamento_id")
+  departamento   Departamento @relation(fields: [departamentoId], references: [id])
+  datos          DatoComparativo[]
+  historial      HistorialCambio[]
+
+  @@map("tablas_config")
+}
+
+model DatoComparativo {
+  id              String   @id @default(uuid())
+  filaId          String   @map("fila_id")  // Identificador de la fila
+  label           String
+  periodoAnterior Decimal  @map("periodo_anterior") @db.Decimal(15, 2)
+  periodoActual   Decimal  @map("periodo_actual") @db.Decimal(15, 2)
+  editable        Boolean  @default(true)
+  orden           Int      @default(0)
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+  
+  // Relaciones
+  tablaConfigId String      @map("tabla_config_id")
+  tablaConfig   TablaConfig @relation(fields: [tablaConfigId], references: [id], onDelete: Cascade)
+
+  @@unique([tablaConfigId, filaId])
+  @@map("datos_comparativos")
+}
+
+// ============================================
+// HISTORIAL Y AUDITORÍA
+// ============================================
+
+model HistorialCambio {
+  id            String   @id @default(uuid())
+  timestamp     DateTime @default(now())
+  campo         Campo
+  valorAnterior Decimal  @map("valor_anterior") @db.Decimal(15, 2)
+  valorNuevo    Decimal  @map("valor_nuevo") @db.Decimal(15, 2)
+  filaId        String   @map("fila_id")
+  filaLabel     String   @map("fila_label")
+  createdAt     DateTime @default(now()) @map("created_at")
+  
+  // Relaciones
+  usuarioId     String      @map("usuario_id")
+  usuario       Usuario     @relation(fields: [usuarioId], references: [id])
+  tablaConfigId String      @map("tabla_config_id")
+  tablaConfig   TablaConfig @relation(fields: [tablaConfigId], references: [id])
+
+  @@map("historial_cambios")
+}
+
+enum Campo {
+  PERIODO_ANTERIOR
+  PERIODO_ACTUAL
+}
+
+// ============================================
+// SNAPSHOTS MENSUALES
+// ============================================
+
+model Snapshot {
+  id            String   @id @default(uuid())
+  mes           Int
+  anio          Int      @map("año")
+  datos         Json     // Almacena todo el estado de datos
+  fechaCreacion DateTime @default(now()) @map("fecha_creacion")
+  
+  // Relaciones
+  creadoPorId String  @map("creado_por_id")
+  creadoPor   Usuario @relation(fields: [creadoPorId], references: [id])
+
+  @@unique([mes, anio])
+  @@map("snapshots")
+}
+
+// ============================================
+// CONFIGURACIÓN
+// ============================================
+
+model ConfigPeriodo {
+  id             String   @id @default(uuid())
+  anteriorInicio DateTime @map("anterior_inicio")
+  anteriorFin    DateTime @map("anterior_fin")
+  anteriorLabel  String   @map("anterior_label")
+  actualInicio   DateTime @map("actual_inicio")
+  actualFin      DateTime @map("actual_fin")
+  actualLabel    String   @map("actual_label")
+  activo         Boolean  @default(true)
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+
+  @@map("config_periodos")
+}
+
+model ConfigGlobal {
+  id               String   @id @default(uuid())
+  edicionHabilitada Boolean  @default(false) @map("edicion_habilitada")
+  updatedAt        DateTime @updatedAt @map("updated_at")
+  updatedBy        String?  @map("updated_by")
+
+  @@map("config_global")
+}
