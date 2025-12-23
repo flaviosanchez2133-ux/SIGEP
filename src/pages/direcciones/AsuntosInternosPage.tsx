@@ -54,7 +54,6 @@ export function AsuntosInternosPage() {
           titulo="Asuntos_Internos"
           datos={denunciasRecibidas}
           departamento="Dir. Gral. Asuntos Internos"
-          periodo="01/01/24 - 31/07/24 vs 01/01/25 - 31/07/25"
         />
       </PageHeader>
 

@@ -1,5 +1,6 @@
 export { StatCard } from './ui/StatCard';
 export { PageHeader, SectionHeader } from './ui/PageHeader';
+export { PeriodSelector } from './ui/PeriodSelector';
 export { TablaComparativa, TablaSimple } from './tables';
 export type { FilaComparativa, ColumnaTabla } from './tables';
 export {

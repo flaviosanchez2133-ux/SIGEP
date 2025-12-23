@@ -112,7 +112,6 @@ export function D3OperacionesPage() {
           titulo="Operaciones_Policiales"
           datos={delitosPropiedad}
           departamento="Departamento Operaciones Policiales (D-3)"
-          periodo="01/01/24 - 31/07/24 vs 01/01/25 - 31/07/25"
         />
       </PageHeader>
 

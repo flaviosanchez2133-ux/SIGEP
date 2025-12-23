@@ -54,7 +54,6 @@ export function UnidadesEspecialesPage() {
           titulo="Unidades_Especiales"
           datos={intervencionesGOE}
           departamento="Dir. Gral. Unidades Especiales"
-          periodo="01/01/24 - 31/07/24 vs 01/01/25 - 31/07/25"
         />
       </PageHeader>
 

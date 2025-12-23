@@ -40,7 +40,6 @@ export function D2InteligenciaPage() {
           titulo="Inteligencia_Criminal"
           datos={procedimientosD2}
           departamento="Departamento Inteligencia Criminal (D-2)"
-          periodo="01/01/24 - 31/07/24 vs 01/01/25 - 31/07/25"
         />
       </PageHeader>
 

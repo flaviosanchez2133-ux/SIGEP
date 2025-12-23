@@ -63,7 +63,6 @@ export function D5JudicialPage() {
           titulo="Judicial_Estadisticas"
           datos={detenidosProcesales}
           departamento="Departamento Judicial (D-5)"
-          periodo="01/01/24 - 31/07/24 vs 01/01/25 - 31/07/25"
         />
       </PageHeader>
 

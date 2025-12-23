@@ -3,7 +3,6 @@ import { useAuthStore, useAppStore, useDataStore } from '../../store';
 import {
   Menu,
   LogOut,
-  Calendar,
   Bell,
   Settings,
   Edit3,
@@ -11,11 +10,12 @@ import {
   History,
 } from 'lucide-react';
 import clsx from 'clsx';
+import { PeriodSelector } from '../ui/PeriodSelector';
 
 export function Header() {
   const navigate = useNavigate();
   const { user, logout } = useAuthStore();
-  const { sidebarOpen, toggleSidebar, periodoSeleccionado } = useAppStore();
+  const { sidebarOpen, toggleSidebar } = useAppStore();
   const { edicionHabilitada, toggleEdicion, crearSnapshot } = useDataStore();
 
   // Solo el superadmin puede habilitar/deshabilitar la edición
@@ -67,17 +67,8 @@ export function Header() {
             <Menu size={20} className="text-gray-600" />
           </button>
 
-          {/* Período seleccionado */}
-          <div className="flex items-center gap-2 px-4 py-2 bg-gray-50 rounded-lg">
-            <Calendar size={18} className="text-policia-primary" />
-            <div className="text-sm">
-              <span className="text-gray-500">Período comparativo: </span>
-              <span className="font-medium text-gray-700">
-                {periodoSeleccionado.anterior.label} vs{' '}
-                {periodoSeleccionado.actual.label}
-              </span>
-            </div>
-          </div>
+          {/* Selector de Período */}
+          <PeriodSelector />
         </div>
 
         {/* Lado derecho */}

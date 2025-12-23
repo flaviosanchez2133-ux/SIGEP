@@ -57,7 +57,6 @@ export function PrevencionCiudadanaPage() {
           titulo="Prevencion_Ciudadana"
           datos={operativosPrevencion}
           departamento="Dir. Gral. Prevención Ciudadana"
-          periodo="01/01/24 - 31/07/24 vs 01/01/25 - 31/07/25"
         />
       </PageHeader>
 

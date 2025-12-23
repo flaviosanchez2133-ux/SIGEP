@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { TrendingUp, TrendingDown, Minus, Edit2, Save, X } from 'lucide-react';
 import clsx from 'clsx';
-import { useDataStore, useAuthStore } from '../../store';
+import { useDataStore, useAuthStore, useAppStore } from '../../store';
 
 export interface FilaComparativa {
   id: string;
@@ -29,8 +29,8 @@ export function TablaComparativa({
   tablaId,
   departamento,
   color = '#1e3a5f',
-  labelPeriodoAnterior = '01/01/24 - 31/07/24',
-  labelPeriodoActual = '01/01/25 - 31/07/25',
+  labelPeriodoAnterior: labelPeriodoAnteriorProp,
+  labelPeriodoActual: labelPeriodoActualProp,
   filas: filasOriginales,
   mostrarTotal = true,
   formatoNumero = 'entero',
@@ -38,6 +38,13 @@ export function TablaComparativa({
 }: TablaComparativaProps) {
   const { user } = useAuthStore();
   const { edicionHabilitada, obtenerDatos, actualizarDatos } = useDataStore();
+  const { periodoSeleccionado } = useAppStore();
+
+  // Usar labels del store si no se pasan como props
+  const labelPeriodoAnterior =
+    labelPeriodoAnteriorProp || periodoSeleccionado.anterior.label;
+  const labelPeriodoActual =
+    labelPeriodoActualProp || periodoSeleccionado.actual.label;
 
   // Obtener datos del store (editados) o usar los originales
   const filasGuardadas = obtenerDatos(tablaId, filasOriginales);

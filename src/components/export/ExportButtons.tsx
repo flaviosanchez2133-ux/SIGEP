@@ -3,20 +3,28 @@ import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import * as XLSX from 'xlsx';
 import { FilaComparativa } from '../tables/TablaComparativa';
+import { useAppStore } from '../../store';
 
 interface ExportButtonsProps {
   titulo: string;
   datos: FilaComparativa[];
   departamento: string;
-  periodo: string;
+  periodo?: string; // Ahora es opcional, se usa del store si no se proporciona
 }
 
 export function ExportButtons({
   titulo,
   datos,
   departamento,
-  periodo,
+  periodo: periodoProp,
 }: ExportButtonsProps) {
+  const { periodoSeleccionado } = useAppStore();
+
+  // Usar el período del store si no se pasa como prop
+  const periodo =
+    periodoProp ||
+    `${periodoSeleccionado.anterior.label} vs ${periodoSeleccionado.actual.label}`;
+
   const exportToPDF = () => {
     const doc = new jsPDF();
 

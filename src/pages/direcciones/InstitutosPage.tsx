@@ -51,7 +51,6 @@ export function InstitutosPage() {
           titulo="Institutos_Formacion"
           datos={aspirantesFormacion}
           departamento="Dir. Gral. Institutos"
-          periodo="01/01/24 - 31/07/24 vs 01/01/25 - 31/07/25"
         />
       </PageHeader>
 
