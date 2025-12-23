@@ -97,12 +97,15 @@ function apiUserToLocal(apiUser: Usuario): User {
     id: apiUser.id,
     username: apiUser.username,
     nombre: apiUser.nombre,
-    departamento: apiUser.departamento?.nombre || apiUser.departamento || 'Sin departamento',
+    departamento:
+      apiUser.departamento?.nombre ||
+      apiUser.departamento ||
+      'Sin departamento',
     rol: apiUser.rol.toLowerCase() as 'admin' | 'editor' | 'viewer',
     color: apiUser.color,
     // El backend puede enviar permisos como array de strings o como objetos con tipo
-    permisos: Array.isArray(apiUser.permisos) 
-      ? apiUser.permisos.map(p => typeof p === 'string' ? p : p.tipo)
+    permisos: Array.isArray(apiUser.permisos)
+      ? apiUser.permisos.map(p => (typeof p === 'string' ? p : p.tipo))
       : [],
   };
 }
