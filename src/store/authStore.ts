@@ -85,14 +85,24 @@ export const USUARIOS_SISTEMA: Record<string, { password: string; user: User }> 
 
 // Convertir usuario de API a tipo local
 function apiUserToLocal(apiUser: Usuario): User {
+  const departamentoNombre =
+    typeof (apiUser as any).departamento === 'string'
+      ? ((apiUser as any).departamento as string)
+      : (apiUser as any).departamento?.nombre;
+
+  const permisosRaw = (apiUser as any).permisos as Array<string | { tipo: string }>;
+  const permisos = Array.isArray(permisosRaw)
+    ? permisosRaw.map((p) => (typeof p === 'string' ? p : p.tipo))
+    : [];
+
   return {
     id: apiUser.id,
     username: apiUser.username,
     nombre: apiUser.nombre,
-    departamento: apiUser.departamento?.nombre || 'Sin departamento',
+    departamento: departamentoNombre || 'Sin departamento',
     rol: apiUser.rol.toLowerCase() as 'admin' | 'editor' | 'viewer',
     color: apiUser.color,
-    permisos: apiUser.permisos.map(p => p.tipo),
+    permisos,
   };
 }
 
@@ -135,7 +145,10 @@ export const useAuthStore = create<AuthState>()(
             });
             return true;
           } catch (error: any) {
-            const message = error.response?.data?.message || 'Credenciales inválidas';
+            const message =
+              error.response?.data?.message ||
+              error.response?.data?.error ||
+              'Credenciales inválidas';
             set({
               isLoading: false,
               error: message,

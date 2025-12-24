@@ -96,12 +96,18 @@ apiClient.interceptors.response.use(
       }
 
       try {
-        const response = await axios.post<{ data: AuthTokens }>(
+        const response = await axios.post<any>(
           `${API_CONFIG.baseURL}/auth/refresh`,
           { refreshToken }
         );
 
-        const { accessToken, refreshToken: newRefreshToken } = response.data.data;
+        const tokens: AuthTokens | undefined =
+          response.data?.tokens || response.data?.data || response.data?.data?.tokens;
+        if (!tokens?.accessToken || !tokens?.refreshToken) {
+          throw new Error('Respuesta inválida de refresh token');
+        }
+
+        const { accessToken, refreshToken: newRefreshToken } = tokens;
         setTokens({ accessToken, refreshToken: newRefreshToken });
 
         processQueue(null, accessToken);
