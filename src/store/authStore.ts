@@ -1,14 +1,22 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { User } from '../types';
-import { authService, getAccessToken, clearTokens, Usuario } from '../services/api';
+import {
+  authService,
+  getAccessToken,
+  clearTokens,
+  Usuario,
+} from '../services/api';
 import { socketService } from '../services/socket';
 
 // Flag para usar API real o simulada
 const USE_API = true; // Cambiar a false para usar usuarios locales
 
 // Usuarios locales de respaldo (para desarrollo sin backend)
-export const USUARIOS_SISTEMA: Record<string, { password: string; user: User }> = {
+export const USUARIOS_SISTEMA: Record<
+  string,
+  { password: string; user: User }
+> = {
   superadmin: {
     password: 'SIGEP_2024',
     user: {
@@ -90,9 +98,11 @@ function apiUserToLocal(apiUser: Usuario): User {
       ? ((apiUser as any).departamento as string)
       : (apiUser as any).departamento?.nombre;
 
-  const permisosRaw = (apiUser as any).permisos as Array<string | { tipo: string }>;
+  const permisosRaw = (apiUser as any).permisos as Array<
+    string | { tipo: string }
+  >;
   const permisos = Array.isArray(permisosRaw)
-    ? permisosRaw.map((p) => (typeof p === 'string' ? p : p.tipo))
+    ? permisosRaw.map(p => (typeof p === 'string' ? p : p.tipo))
     : [];
 
   return {
@@ -133,10 +143,10 @@ export const useAuthStore = create<AuthState>()(
           try {
             const apiUser = await authService.login({ username, password });
             const user = apiUserToLocal(apiUser);
-            
+
             // Conectar Socket.IO después del login
             socketService.connect();
-            
+
             set({
               user,
               isAuthenticated: true,
@@ -185,13 +195,13 @@ export const useAuthStore = create<AuthState>()(
             console.error('Error en logout:', error);
           }
         }
-        
+
         // Desconectar Socket.IO
         socketService.disconnect();
-        
+
         // Limpiar tokens
         clearTokens();
-        
+
         set({
           user: null,
           isAuthenticated: false,
@@ -209,7 +219,7 @@ export const useAuthStore = create<AuthState>()(
 
       checkAuth: async () => {
         if (!USE_API) return;
-        
+
         const token = getAccessToken();
         if (!token) {
           set({ user: null, isAuthenticated: false });
@@ -220,10 +230,10 @@ export const useAuthStore = create<AuthState>()(
         try {
           const apiUser = await authService.getCurrentUser();
           const user = apiUserToLocal(apiUser);
-          
+
           // Reconectar Socket.IO si es necesario
           socketService.connect();
-          
+
           set({
             user,
             isAuthenticated: true,
@@ -245,7 +255,7 @@ export const useAuthStore = create<AuthState>()(
     }),
     {
       name: 'sigep-auth-storage',
-      partialize: (state) => ({
+      partialize: state => ({
         // Solo persistir el estado de autenticación, no el loading/error
         user: state.user,
         isAuthenticated: state.isAuthenticated,
