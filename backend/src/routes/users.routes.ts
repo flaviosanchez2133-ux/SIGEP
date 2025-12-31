@@ -8,6 +8,7 @@ import {
   changePassword,
 } from '../controllers/users.controller.js';
 import { authMiddleware, requireSuperAdmin } from '../middleware/auth.js';
+import { auditLog } from '../middleware/audit.middleware.js';
 
 const router = Router();
 
@@ -17,9 +18,9 @@ router.use(requireSuperAdmin);
 
 router.get('/', listUsers);
 router.get('/:id', getUser);
-router.post('/', createUser);
-router.put('/:id', updateUser);
-router.delete('/:id', deleteUser);
-router.put('/:id/password', changePassword);
+router.post('/', auditLog('usuarios'), createUser);
+router.put('/:id', auditLog('usuarios'), updateUser);
+router.delete('/:id', auditLog('usuarios'), deleteUser);
+router.put('/:id/password', changePassword); // Auditoría handled by securityEvents
 
 export default router;

@@ -3,11 +3,13 @@ import { z } from 'zod';
 import { prisma } from '../config/database.js';
 import { hashPassword } from '../utils/jwt.js';
 import { AppError } from '../middleware/error.js';
+import { validatePassword, passwordSchema, getPasswordRequirements } from '../utils/password-validator.js';
+import { securityEvents } from '../utils/logger.js';
 
 // Esquemas de validación
 const createUserSchema = z.object({
   username: z.string().min(3).max(50),
-  password: z.string().min(6),
+  password: passwordSchema, // Usa la política de contraseñas
   nombre: z.string().min(1).max(100),
   rol: z.enum(['ADMIN', 'EDITOR', 'VIEWER']).default('EDITOR'),
   color: z.string().regex(/^#[0-9A-Fa-f]{6}$/).optional(),
@@ -25,7 +27,7 @@ const updateUserSchema = z.object({
 });
 
 const changePasswordSchema = z.object({
-  newPassword: z.string().min(6),
+  newPassword: passwordSchema, // Usa la política de contraseñas
 });
 
 // Listar usuarios
@@ -97,6 +99,12 @@ export async function createUser(req: Request, res: Response, next: NextFunction
   try {
     const data = createUserSchema.parse(req.body);
 
+    // Validar contraseña adicionalmente con mensajes detallados
+    const passwordValidation = validatePassword(data.password, data.username);
+    if (!passwordValidation.isValid) {
+      throw new AppError(`Contraseña inválida: ${passwordValidation.errors.join(', ')}`, 400);
+    }
+
     // Hash password
     const passwordHash = await hashPassword(data.password);
 
@@ -120,6 +128,10 @@ export async function createUser(req: Request, res: Response, next: NextFunction
         permisos: true,
       },
     });
+
+    // Registrar creación de usuario
+    const clientIp = req.ip || req.socket.remoteAddress || 'unknown';
+    securityEvents.userCreated(usuario.id, req.user?.userId || 'system', clientIp);
 
     res.status(201).json({
       id: usuario.id,
@@ -211,6 +223,18 @@ export async function changePassword(req: Request, res: Response, next: NextFunc
     const { id } = req.params;
     const { newPassword } = changePasswordSchema.parse(req.body);
 
+    // Obtener usuario para validación
+    const usuario = await prisma.usuario.findUnique({ where: { id } });
+    if (!usuario) {
+      throw new AppError('Usuario no encontrado', 404);
+    }
+
+    // Validar contraseña con política
+    const validation = validatePassword(newPassword, usuario.username);
+    if (!validation.isValid) {
+      throw new AppError(`Contraseña inválida: ${validation.errors.join(', ')}`, 400);
+    }
+
     const passwordHash = await hashPassword(newPassword);
 
     await prisma.usuario.update({
@@ -218,8 +242,20 @@ export async function changePassword(req: Request, res: Response, next: NextFunc
       data: { passwordHash },
     });
 
+    // Registrar cambio de contraseña
+    const clientIp = req.ip || req.socket.remoteAddress || 'unknown';
+    securityEvents.passwordChanged(id, req.user?.userId || 'system', clientIp);
+
     res.json({ message: 'Contraseña actualizada correctamente' });
   } catch (error) {
     next(error);
   }
+}
+
+// Obtener requisitos de contraseña (endpoint público para UI)
+export async function getPasswordPolicy(_req: Request, res: Response): Promise<void> {
+  res.json({
+    requirements: getPasswordRequirements(),
+    minLength: 12,
+  });
 }

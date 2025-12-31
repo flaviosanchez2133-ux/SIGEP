@@ -3,6 +3,7 @@ import { Server, Socket } from 'socket.io';
 import { verifyAccessToken } from '../utils/jwt.js';
 import { redisCache } from '../config/redis.js';
 import { config } from '../config/index.js';
+import { securityEvents } from '../utils/logger.js';
 
 let io: Server;
 
@@ -91,6 +92,9 @@ export function initializeSocketIO(httpServer: HttpServer): Server {
 
       next();
     } catch (error) {
+      // Registrar intento fallido
+      const clientIp = socket.handshake.address || 'unknown';
+      securityEvents.loginFailed('unknown (socket)', clientIp, 'Token inválido o expirado en WebSocket');
       next(new Error('Token inválido o expirado'));
     }
   });
@@ -98,6 +102,10 @@ export function initializeSocketIO(httpServer: HttpServer): Server {
   // Manejar conexiones
   io.on('connection', (socket: Socket<ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData>) => {
     console.log(`🔌 Usuario conectado: ${socket.data.username} (${socket.id})`);
+    
+    // Registrar conexión exitosa (opcional, puede ser ruidoso)
+    // securityEvents.loginSuccess(socket.data.username, socket.handshake.address, socket.data.userId); 
+    // Mejor solo loguear conexiones sospechosas o fallidas, o dejar el log de consola.
 
     // Unirse a room general
     socket.join('general');

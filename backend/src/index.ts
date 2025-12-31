@@ -10,6 +10,8 @@ import { redis } from './config/redis.js';
 import { initializeSocketIO } from './sockets/index.js';
 import routes from './routes/index.js';
 import { errorHandler, notFoundHandler } from './middleware/error.js';
+import { apiLimiter } from './middleware/rate-limit.js';
+import logger from './utils/logger.js';
 
 // Validar configuración
 validateConfig();
@@ -18,9 +20,27 @@ validateConfig();
 const app = express();
 const httpServer = createServer(app);
 
-// Middlewares de seguridad
+// Middlewares de seguridad - Helmet con configuración completa
 app.use(helmet({
-  contentSecurityPolicy: false, // Desactivar para desarrollo
+  contentSecurityPolicy: config.isProd ? {
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: ["'self'"],
+      styleSrc: ["'self'", "'unsafe-inline'"],
+      imgSrc: ["'self'", "data:", "https:"],
+      connectSrc: ["'self'", config.corsOrigin],
+      fontSrc: ["'self'", "https://fonts.gstatic.com"],
+      objectSrc: ["'none'"],
+      upgradeInsecureRequests: [],
+    }
+  } : false, // Desactivar CSP en desarrollo
+  hsts: {
+    maxAge: 31536000, // 1 año
+    includeSubDomains: true,
+    preload: true,
+  },
+  referrerPolicy: { policy: 'strict-origin-when-cross-origin' },
+  crossOriginEmbedderPolicy: false, // Puede causar problemas con recursos externos
 }));
 
 // CORS
@@ -31,11 +51,18 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Authorization'],
 }));
 
+// Rate limiting global para API
+app.use('/api', apiLimiter);
+
 // Logging
 if (config.isDev) {
   app.use(morgan('dev'));
 } else {
-  app.use(morgan('combined'));
+  app.use(morgan('combined', {
+    stream: {
+      write: (message: string) => logger.info(message.trim())
+    }
+  }));
 }
 
 // Body parsing

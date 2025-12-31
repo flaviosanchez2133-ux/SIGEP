@@ -10,6 +10,7 @@ import {
   getRefreshTokenExpiry,
 } from '../utils/jwt.js';
 import { AppError } from '../middleware/error.js';
+import { securityEvents } from '../utils/logger.js';
 
 // Esquemas de validación
 const loginSchema = z.object({
@@ -35,13 +36,17 @@ export async function login(req: Request, res: Response, next: NextFunction): Pr
       },
     });
 
+    const clientIp = req.ip || req.socket.remoteAddress || 'unknown';
+
     if (!usuario || !usuario.activo) {
+      securityEvents.loginFailed(username, clientIp, usuario ? 'Usuario inactivo' : 'Usuario no encontrado');
       throw new AppError('Credenciales inválidas', 401);
     }
 
     // Verificar contraseña
     const isValid = await verifyPassword(password, usuario.passwordHash);
     if (!isValid) {
+      securityEvents.loginFailed(username, clientIp, 'Contraseña incorrecta');
       throw new AppError('Credenciales inválidas', 401);
     }
 
@@ -52,12 +57,27 @@ export async function login(req: Request, res: Response, next: NextFunction): Pr
       rol: usuario.rol,
     });
 
+    // Control de sesiones concurrentes (Max 3)
+    const activeSessions = await redisCache.getActiveSessionsCount(usuario.id);
+    if (activeSessions >= 3) {
+      await redisCache.invalidateAllUserTokens(usuario.id);
+      securityEvents.suspiciousActivity({
+        type: 'CONCURRENT_SESSIONS_LIMIT',
+        message: 'Límite de sesiones excedido. Se cerraron todas las sesiones anteriores.',
+        userId: usuario.id,
+        ip: clientIp 
+      });
+    }
+
     // Guardar refresh token en Redis
     await redisCache.setRefreshToken(
       usuario.id,
       tokens.refreshToken,
       getRefreshTokenExpiry()
     );
+
+    // Registrar login exitoso
+    securityEvents.loginSuccess(usuario.username, clientIp, usuario.id);
 
     // Responder
     res.json({
@@ -83,6 +103,8 @@ export async function logout(req: Request, res: Response, next: NextFunction): P
   try {
     const { refreshToken } = refreshSchema.parse(req.body);
 
+    const clientIp = req.ip || req.socket.remoteAddress || 'unknown';
+
     if (req.user) {
       // Invalidar refresh token
       await redisCache.invalidateRefreshToken(req.user.userId, refreshToken);
@@ -93,6 +115,9 @@ export async function logout(req: Request, res: Response, next: NextFunction): P
         const token = authHeader.substring(7);
         await redisCache.blacklistToken(token, 3600); // 1 hora
       }
+
+      // Registrar logout
+      securityEvents.logout(req.user.username, req.user.userId, clientIp);
     }
 
     res.json({ message: 'Sesión cerrada correctamente' });
@@ -141,6 +166,10 @@ export async function refresh(req: Request, res: Response, next: NextFunction): 
       tokens.refreshToken,
       getRefreshTokenExpiry()
     );
+
+    // Registrar refresh de token
+    const clientIp = req.ip || req.socket.remoteAddress || 'unknown';
+    securityEvents.tokenRefresh(usuario.id, clientIp);
 
     res.json({ tokens });
   } catch (error) {

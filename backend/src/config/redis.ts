@@ -98,4 +98,10 @@ export const redisCache = {
     const result = await redis.get(`blacklist:${token}`);
     return result === 'invalid';
   },
+
+  // Obtener número de sesiones activas (basado en refresh tokens)
+  async getActiveSessionsCount(userId: string): Promise<number> {
+    const keys = await redis.keys(`refresh:${userId}:*`);
+    return keys.length;
+  },
 };
